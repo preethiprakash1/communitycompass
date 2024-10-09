@@ -1,34 +1,34 @@
 package com.example.javadb.model;
 
-import javax.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table (name = "communitygroups")
+@Table (name = "community_groups")
 public class CommunityGroup {
 
-    //    not necessary but can keep this func and try breaking the program
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "communityGroupID")
-        private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int community_id;
 
-    public String getCommunityGroup() {
-        return communityGroup;
+    @Column(name = "community_name", nullable = false, length = 100)
+    private String communityName;
+
+    // Getters and Setters
+    public int getCommunityId() {
+        return community_id;
     }
 
-    public void setCommunityGroup(String communityGroup) {
-        this.communityGroup = communityGroup;
+    public String getCommunityName() {
+        return communityName;
     }
 
-    @Column(name = "communityGroup_string")
-    private String communityGroup;
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
 
 }

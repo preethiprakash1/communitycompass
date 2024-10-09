@@ -9,5 +9,4 @@ public class JavadbApplication {
     public static void main(String[] args) {
         SpringApplication.run(JavadbApplication.class, args);
     }
-
 }
