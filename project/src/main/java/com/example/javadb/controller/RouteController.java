@@ -4,39 +4,589 @@ import com.example.javadb.model.CommunityGroup;
 import com.example.javadb.repository.CommunityGroupRepository;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * This class contains all the API routes for the system.
+ */
 @RestController
 public class RouteController {
+
+    private final UserRepository userRepository;
+    private final CommunityGroupRepository communityGroupRepository;
+    private final ResourceRepository ResourceRepository;
+    private final UserCommunityRepository userCommunityRepository;
+
     @Autowired
-    // constructor
     public RouteController(CommunityGroupRepository communityGroupRepository) {
+        this.userRepository = userRepository;
         this.communityGroupRepository = communityGroupRepository;
     }
-    private final CommunityGroupRepository communityGroupRepository;
 
-    @GetMapping("/welcome")
+    /**
+     * Redirects to the homepage.
+     *
+     * @return A String containing a welcome message.
+     */
+    @GetMapping({"/", "/index", "/home", "/welcome"})
 	public String welcome() {
 		return "Hi, welcome to Community Compass";
 	}
 
-    @GetMapping("/getCommunityGroups")
-	public ResponseEntity<?> getCommunityGroups(){
-		try {
+    // Community Groups
+    
+    /**
+     * Retrieves all community groups.
+     *
+     * @return A {@code ResponseEntity} containing the list of community groups or a message if none are found.
+     */
+    @GetMapping(value = "/getCommunityGroups", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getCommunityGroups() {
+        try {
             List<CommunityGroup> items = communityGroupRepository.findAll();
             if (items.isEmpty()) {
                 return new ResponseEntity<>("No Community Groups Found", HttpStatus.NOT_FOUND);
             }
             return new ResponseEntity<>(items, HttpStatus.OK);
-    
         } catch (Exception e) {
             return handleException(e);
         }
-	}
+    }
+
+    /**
+     * Retrieves a community group by its ID.
+     *
+     * @param communityId The ID of the community group.
+     * @return A {@code ResponseEntity} containing the community group or a message if not found.
+     */
+    @GetMapping(value = "/getCommunityGroup", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getCommunityGroupById(@RequestParam("id") int communityId,
+                @RequestParam(value = "attribute", required = false) String attributeName) {
+        try {
+            return communityGroupRepository.findById(communityId)
+                    .map(communityGroup -> {
+                        if (attributeName != null) {
+                            switch (attributeName.toLowerCase()) {
+                                case "communityname":
+                                    return new ResponseEntity<>(communityGroup.getCommunityName(), HttpStatus.OK);
+                                case "communitytype":
+                                    return new ResponseEntity<>(communityGroup.getCommunityType(), HttpStatus.OK);
+                                case "latitude":
+                                    return new ResponseEntity<>(communityGroup.getLatitude(), HttpStatus.OK);
+                                case "longitude":
+                                    return new ResponseEntity<>(communityGroup.getLongitude(), HttpStatus.OK);
+                                case "capacity":
+                                    return new ResponseEntity<>(communityGroup.getCapacity(), HttpStatus.OK);
+                                case "description":
+                                    return new ResponseEntity<>(communityGroup.getDescription(), HttpStatus.OK);
+                                case "usercount":
+                                    return new ResponseEntity<>(communityGroup.getNumberOfUsers(), HttpStatus.OK);
+                                default:
+                                    return new ResponseEntity<>("Attribute Not Found", HttpStatus.NOT_FOUND);
+                            }
+                        }
+                        // If no attribute is specified, return the entire community group
+                        return new ResponseEntity<>(communityGroup, HttpStatus.OK);
+                    })
+                    .orElse(new ResponseEntity<>("Community Group Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Creates a new community group.
+     *
+     * @param communityName   The name of the community group.
+     * @param communityType   The type of the community group.
+     * @param latitude        The latitude of the community group location.
+     * @param longitude       The longitude of the community group location.
+     * @param capacity        The capacity of the community group.
+     * @param description     A description of the community group.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PostMapping(value =  "/createCommunityGroup", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createCommunityGroup(
+            @RequestParam("communityName") String communityName,
+            @RequestParam("communityType") String communityType,
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("capacity") int capacity,
+            @RequestParam("description") String description) {
+
+        try {
+            // Create the CommunityGroup object
+            CommunityGroup newGroup = new CommunityGroup(communityName, communityType, latitude, longitude, capacity, description);
+
+            // Save the new CommunityGroup
+            CommunityGroup savedGroup = communityGroupRepository.save(newGroup);
+            return new ResponseEntity<>(savedGroup, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Updates a specific attribute of a community group by its ID.
+     *
+     * @param communityId    The ID of the community group.
+     * @param attributeName  The name of the attribute to update.
+     * @param value          The new value for the specified attribute.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PatchMapping(value = "/updateCommunityGroup", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateCommunityGroup(
+            @RequestParam("id") int communityId,
+            @RequestParam("attribute") String attributeName,
+            @RequestParam("value") String value) {
+        try {
+            return communityGroupRepository.findById(communityId)
+                    .map(group -> {
+                        switch (attributeName.toLowerCase()) {
+                            case "communityname":
+                                group.setCommunityName(value);
+                                break;
+                            case "communitytype":
+                                group.setCommunityType(CommunityType.valueOf(value.toUpperCase()));
+                                break;
+                            case "latitude":
+                                group.setLatitude(Double.parseDouble(value));
+                                break;
+                            case "longitude":
+                                group.setLongitude(Double.parseDouble(value));
+                                break;
+                            case "capacity":
+                                group.setCapacity(Integer.parseInt(value));
+                                break;
+                            case "description":
+                                group.setDescription(value);
+                                break;
+                            // Add cases for other attributes as needed
+                            default:
+                                return new ResponseEntity<>("Attribute Not Found", HttpStatus.NOT_FOUND);
+                        }
+                        communityGroupRepository.save(group);
+                        return new ResponseEntity<>(group, HttpStatus.OK);
+                    })
+                    .orElse(new ResponseEntity<>("Community Group Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Deletes a community group by its ID.
+     *
+     * @param communityId The ID of the community group to delete.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @DeleteMapping(value = "/deleteCommunityGroup", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteCommunityGroup(@RequestParam("id") int communityId) {
+        try {
+            if (communityGroupRepository.existsById(communityId)) {
+                communityGroupRepository.deleteById(communityId);
+                return new ResponseEntity<>("Community Group Deleted Successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Community Group Not Found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+
+    // Users
+
+    /**
+     * Retrieves all users.
+     *
+     * @return A {@code ResponseEntity} containing the list of users or a message if none are found.
+     */
+    @GetMapping(value = "/getUsers", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUsers() {
+        try {
+            List<User> users = userRepository.findAll();
+            if (users.isEmpty()) {
+                return new ResponseEntity<>("No Users Found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param userId The ID of the user.
+     * @return A {@code ResponseEntity} containing the user or a message if not found.
+     */
+    @GetMapping(value = "/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserById(@RequestParam("id") int userId) {
+        try {
+            return userRepository.findById(userId)
+                    .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+
+    /**
+     * Retrieves a specific attribute of a user by their ID.
+     *
+     * @param userId        The ID of the user.
+     * @param attributeName The name of the attribute to retrieve (optional).
+     * @return A {@code ResponseEntity} containing the specified attribute's value or the whole user if no attribute is specified.
+     */
+    @GetMapping(value = "/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUserById(
+            @RequestParam("id") int userId,
+            @RequestParam(value = "attribute", required = false) String attributeName) {
+        try {
+            return userRepository.findById(userId)
+                    .map(user -> {
+                        if (attributeName != null) {
+                            switch (attributeName.toLowerCase()) {
+                                case "name":
+                                    return new ResponseEntity<>(user.getName(), HttpStatus.OK);
+                                case "email":
+                                    return new ResponseEntity<>(user.getEmail(), HttpStatus.OK);
+                                case "age":
+                                    return new ResponseEntity<>(user.getAge(), HttpStatus.OK);
+                                case "sex":
+                                    return new ResponseEntity<>(user.getSex(), HttpStatus.OK);
+                                case "latitude":
+                                    return new ResponseEntity<>(user.getLatitude(), HttpStatus.OK);
+                                case "longitude":
+                                    return new ResponseEntity<>(user.getLongitude(), HttpStatus.OK);
+                                case "communitycount":
+                                    return new ResponseEntity<>(user.getNumberOfCommunities(), HttpStatus.OK);
+                                default:
+                                    return new ResponseEntity<>("Attribute Not Found", HttpStatus.NOT_FOUND);
+                            }
+                        }
+                        // If no attribute is specified, return the entire user
+                        return new ResponseEntity<>(user, HttpStatus.OK);
+                    })
+                    .orElse(new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Creates a new user.
+     *
+     * @param name      The name of the user.
+     * @param email     The email of the user.
+     * @param age       The age of the user.
+     * @param sex       The sex of the user.
+     * @param latitude  The latitude of the user's location.
+     * @param longitude The longitude of the user's location.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PostMapping(value = "/createUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createUser(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("age") int age,
+            @RequestParam("sex") String sex,
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude) {
+
+        try {
+            // Create a new User object
+            User newUser = new User(name, email, age, Sex.valueOf(sex.toUpperCase()), latitude, longitude);
+
+            // Save the new user
+            User savedUser = userRepository.save(newUser);
+            return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Updates a specific attribute of a user by their ID.
+     *
+     * @param userId        The ID of the user.
+     * @param attributeName The name of the attribute to update.
+     * @param value         The new value for the specified attribute.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PatchMapping(value = "/updateUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUser(
+            @RequestParam("id") int userId,
+            @RequestParam("attribute") String attributeName,
+            @RequestParam("value") String value) {
+        try {
+            return userRepository.findById(userId)
+                    .map(user -> {
+                        switch (attributeName.toLowerCase()) {
+                            case "name":
+                                user.setName(value);
+                                break;
+                            case "email":
+                                user.setEmail(value);
+                                break;
+                            case "age":
+                                user.setAge(Integer.parseInt(value));
+                                break;
+                            case "sex":
+                                user.setSex(Sex.valueOf(value.toUpperCase()));
+                                break;
+                            case "latitude":
+                                user.setLatitude(Double.parseDouble(value));
+                                break;
+                            case "longitude":
+                                user.setLongitude(Double.parseDouble(value));
+                                break;
+                            default:
+                                return new ResponseEntity<>("Attribute Not Found", HttpStatus.NOT_FOUND);
+                        }
+                        userRepository.save(user);
+                        return new ResponseEntity<>(user, HttpStatus.OK);
+                    })
+                    .orElse(new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param userId The ID of the user to delete.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @DeleteMapping(value = "/deleteUser", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteUser(@RequestParam("id") int userId) {
+        try {
+            if (userRepository.existsById(userId)) {
+                userRepository.deleteById(userId);
+                return new ResponseEntity<>("User Deleted Successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    
+    // Resources
+
+    /**
+     * Retrieves all resources.
+     *
+     * @return A {@code ResponseEntity} containing a list of all resources.
+     */
+    @GetMapping(value = "/getAllResources", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllResources() {
+        try {
+            List<Resource> resources = resourceRepository.findAll();
+            return new ResponseEntity<>(resources, HttpStatus.OK);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Retrieves a resource by its ID.
+     *
+     * @param resourceId The ID of the resource.
+     * @return A {@code ResponseEntity} containing the resource or a message if not found.
+     */
+    @GetMapping(value = "/getResource", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getResourceById(@RequestParam("id") int resourceId) {
+        try {
+            return resourceRepository.findById(resourceId)
+                    .map(resource -> new ResponseEntity<>(resource, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>("Resource Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Creates a new resource.
+     *
+     * @param resourceName  The name of the resource.
+     * @param resourceType  The type of the resource.
+     * @param latitude      The latitude of the resource location.
+     * @param longitude     The longitude of the resource location.
+     * @param resourceHours The hours during which the resource is available.
+     * @param description   A description of the resource.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PostMapping(value = "/createResource", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createResource(
+            @RequestParam("resourceName") String resourceName,
+            @RequestParam("resourceType") String resourceType,
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("resourceHours") String resourceHours,
+            @RequestParam("description") String description) {
+
+        try {
+            // Create the Resource object
+            Resource newResource = new Resource();
+            newResource.setResourceName(resourceName);
+            newResource.setResourceType(ResourceType.valueOf(resourceType.toUpperCase()));
+            newResource.setLatitude(latitude);
+            newResource.setLongitude(longitude);
+            newResource.setResourceHours(resourceHours);
+            newResource.setDescription(description);
+            newResource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            newResource.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+            // Save the new Resource
+            Resource savedResource = resourceRepository.save(newResource);
+            return new ResponseEntity<>(savedResource, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Updates a specific attribute of a resource by its ID.
+     *
+     * @param resourceId    The ID of the resource.
+     * @param attributeName The name of the attribute to update.
+     * @param value         The new value for the specified attribute.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PatchMapping(value = "/updateResource", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateResource(
+            @RequestParam("id") int resourceId,
+            @RequestParam("attribute") String attributeName,
+            @RequestParam("value") String value) {
+        try {
+            return resourceRepository.findById(resourceId)
+                    .map(resource -> {
+                        switch (attributeName.toLowerCase()) {
+                            case "resourcename":
+                                resource.setResourceName(value);
+                                break;
+                            case "resourcetype":
+                                resource.setResourceType(ResourceType.valueOf(value.toUpperCase()));
+                                break;
+                            case "latitude":
+                                resource.setLatitude(Double.parseDouble(value));
+                                break;
+                            case "longitude":
+                                resource.setLongitude(Double.parseDouble(value));
+                                break;
+                            case "resourcehours":
+                                resource.setResourceHours(value);
+                                break;
+                            case "description":
+                                resource.setDescription(value);
+                                break;
+                            default:
+                                return new ResponseEntity<>("Attribute Not Found", HttpStatus.NOT_FOUND);
+                        }
+                        resourceRepository.save(resource);
+                        return new ResponseEntity<>(resource, HttpStatus.OK);
+                    })
+                    .orElse(new ResponseEntity<>("Resource Not Found", HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Deletes a resource by its ID.
+     *
+     * @param resourceId The ID of the resource.
+     * @return A {@code ResponseEntity} indicating the result of the deletion.
+     */
+    @DeleteMapping(value = "/deleteResource", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteResource(@RequestParam("id") int resourceId) {
+        try {
+            if (resourceRepository.existsById(resourceId)) {
+                resourceRepository.deleteById(resourceId);
+                return new ResponseEntity<>("Resource Deleted Successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Resource Not Found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Adds a user to a community group.
+     *
+     * @param userId       The ID of the user.
+     * @param communityId  The ID of the community group.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @PostMapping(value = "/addUserToCommunity", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addUserToCommunity(
+            @RequestParam("userId") int userId,
+            @RequestParam("communityId") int communityId) {
+        try {
+            // Check if the user and community group exist
+            boolean userExists = userRepository.existsById(userId);
+            boolean communityExists = communityGroupRepository.existsById(communityId);
+
+            if (userExists && communityExists) {
+                // Add the association if it doesn't already exist
+                UserCommunityKey key = new UserCommunityKey(userId, communityId);
+                if (!userCommunityRepository.existsById(key)) {
+                    UserCommunity userCommunity = new UserCommunity(userId, communityId);
+                    userCommunityRepository.save(userCommunity);
+                    return new ResponseEntity<>("User added to community group successfully", HttpStatus.CREATED);
+                } else {
+                    return new ResponseEntity<>("User is already a member of the community group", HttpStatus.CONFLICT);
+                }
+            } else if (userExists) {
+                return new ResponseEntity<>("Community Group not found", HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Removes a user from a community group.
+     *
+     * @param userId       The ID of the user.
+     * @param communityId  The ID of the community group.
+     * @return A {@code ResponseEntity} indicating the result of the operation.
+     */
+    @DeleteMapping(value = "/removeUserFromCommunity", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> removeUserFromCommunity(
+            @RequestParam("userId") int userId,
+            @RequestParam("communityId") int communityId) {
+        try {
+            // Check if the association exists
+            UserCommunityKey key = new UserCommunityKey(userId, communityId);
+            if (userCommunityRepository.existsById(key)) {
+                userCommunityRepository.deleteById(key);
+                return new ResponseEntity<>("User removed from community group successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("User is not a member of the community group", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
 
     private ResponseEntity<?> handleException(Exception e) {
         System.out.println(e.toString());
