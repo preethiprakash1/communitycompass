@@ -25,10 +25,10 @@ public class User {
   @Column(name = "sex", nullable = false)
   private Sex sex;
 
-  @Column(name = "latitude", precision = 9, scale = 6)
+  @Column(name = "latitude")
   private double latitude;
 
-  @Column(name = "longitude", precision = 9, scale = 6)
+  @Column(name = "longitude")
   private double longitude;
 
   @Column(name = "created_at", nullable = false, updatable = false)
@@ -37,11 +37,9 @@ public class User {
   @Column(name = "updated_at", nullable = false)
   private Timestamp updatedAt;
 
-
-  @ElementCollection
-  @CollectionTable(name = "user_community", joinColumns = @JoinColumn(name = "user_id"))
-  @Column(name = "community_id")
-  private List<Integer> communityMembership;
+  // One to Many relationship with UserCommunity
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<UserCommunity> communityMembership;
 
   // Enum for sex
   public enum Sex {
@@ -63,7 +61,7 @@ public class User {
     this.updatedAt = updatedAt;
   }
 
-  // Getters and Setters
+  // Getters and setters
   public int getUserId() {
     return user_id;
   }
@@ -73,6 +71,9 @@ public class User {
   }
 
   public void setName(String name) {
+    if (name == null || name.trim().isEmpty()) {
+      throw new IllegalArgumentException("Name cannot be null or empty");
+    }
     this.name = name;
   }
 
@@ -81,6 +82,9 @@ public class User {
   }
 
   public void setEmail(String email) {
+    if (email == null || !email.contains("@")) {
+      throw new IllegalArgumentException("Invalid email address");
+    }
     this.email = email;
   }
 
@@ -89,6 +93,9 @@ public class User {
   }
 
   public void setAge(int age) {
+    if (age < 0) {
+      throw new IllegalArgumentException("Age cannot be negative");
+    }
     this.age = age;
   }
 
@@ -97,6 +104,9 @@ public class User {
   }
 
   public void setSex(Sex sex) {
+    if (sex == null) {
+      throw new IllegalArgumentException("Sex cannot be null");
+    }
     this.sex = sex;
   }
 
@@ -132,6 +142,14 @@ public class User {
     this.updatedAt = updatedAt;
   }
 
+  public List<UserCommunity> getCommunityMembership() {
+    return communityMembership;
+  }
+
+  public void setCommunityMembership(List<UserCommunity> communityMembership) {
+    this.communityMembership = communityMembership;
+  }
+
   public int getNumberOfCommunities() {
     if (communityMembership == null) {
       return 0;
@@ -152,6 +170,7 @@ public class User {
             ", longitude=" + longitude +
             ", createdAt=" + createdAt +
             ", updatedAt=" + updatedAt +
+            ", communityMembership=" + communityMembership +
             '}';
   }
 }

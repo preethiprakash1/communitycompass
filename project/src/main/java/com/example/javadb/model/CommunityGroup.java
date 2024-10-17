@@ -1,21 +1,11 @@
 package com.example.javadb.model;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table (name = "community_groups")
+@Table(name = "community_groups")
 public class CommunityGroup {
 
     @Id
@@ -25,14 +15,14 @@ public class CommunityGroup {
     @Column(name = "community_name", nullable = false, length = 100)
     private String communityName;
 
-    @Column(name = "community_type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "community_type", nullable = false)
     private CommunityType communityType;
 
-    @Column(name = "latitude", precision = 9, scale = 6)
+    @Column(name = "latitude")
     private double latitude;
 
-    @Column(name = "longitude", precision = 9, scale = 6)
+    @Column(name = "longitude")
     private double longitude;
 
     @Column(name = "capacity")
@@ -47,11 +37,8 @@ public class CommunityGroup {
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 
-    @ElementCollection  // list of user IDs associated with the group
-    @CollectionTable(name = "user_community",
-            joinColumns = @JoinColumn(name = "community_id"))
-    @Column(name = "user_id")
-    private List<Integer> users;
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserCommunity> userCommunities;
 
     public enum CommunityType {
         MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER
@@ -73,7 +60,7 @@ public class CommunityGroup {
         this.updatedAt = updatedAt;
     }
 
-    // Getters and Setters
+    // Getters and setters
     public int getCommunityId() {
         return community_id;
     }
@@ -83,26 +70,67 @@ public class CommunityGroup {
     }
 
     public void setCommunityName(String communityName) {
+        if (communityName == null || communityName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Community name cannot be null or empty");
+        }
         this.communityName = communityName;
     }
 
-    public CommunityType getCommunityType() { return communityType; }
+    public CommunityType getCommunityType() {
+        return communityType;
+    }
 
-    public void setCommunityType(CommunityType communityType) { this.communityType = communityType; }
+    public void setCommunityType(CommunityType communityType) {
+        if (communityType == null) {
+            throw new IllegalArgumentException("Community type cannot be null");
+        }
+        this.communityType = communityType;
+    }
 
-    public double getLatitude() { return latitude; }
+    public List<UserCommunity> getUserCommunities() {
+        return userCommunities;
+    }
 
-    public void setLatitude(double latitude) { this.latitude = latitude; }
+    public void setUserCommunities(List<UserCommunity> userCommunities) {
+        this.userCommunities = userCommunities;
+    }
 
-    public double getLongitude() { return longitude; }
+    public double getLatitude() {
+        return latitude;
+    }
 
-    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public void setLatitude(double latitude) {
+        if (latitude < -90 || latitude > 90) {
+            throw new IllegalArgumentException("Latitude must be between -90 and 90");
+        }
+        this.latitude = latitude;
+    }
 
-    public int getCapacity() { return capacity; }
+    public double getLongitude() {
+        return longitude;
+    }
 
-    public void setCapacity(int capacity) { this.capacity = capacity; }
+    public void setLongitude(double longitude) {
+        if (longitude < -180 || longitude > 180) {
+            throw new IllegalArgumentException("Longitude must be between -180 and 180");
+        }
+        this.longitude = longitude;
+    }
 
-    public String getDescription() { return description; }
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Capacity cannot be negative");
+        }
+        this.capacity = capacity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -124,22 +152,13 @@ public class CommunityGroup {
         this.updatedAt = updatedAt;
     }
 
-    public List<Integer> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<Integer> users) {
-        this.users = users;
-    }
-
     public int getNumberOfUsers() {
-        if (users == null) {
+        if (userCommunities == null) {
             return 0;
         } else {
-            return users.size();
+            return userCommunities.size();
         }
     }
-
     @Override
     public String toString() {
         return "CommunityGroup{" +
@@ -152,7 +171,7 @@ public class CommunityGroup {
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", users=" + users +
+                ", userCommunities=" + userCommunities +
                 '}';
     }
 }
