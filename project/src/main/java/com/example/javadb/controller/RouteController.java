@@ -2,6 +2,11 @@ package com.example.javadb.controller;
 
 import com.example.javadb.model.CommunityGroup;
 import com.example.javadb.repository.CommunityGroupRepository;
+import com.example.javadb.model.User;
+import com.example.javadb.repository.UserRepository;
+import com.example.javadb.model.Resource;
+import com.example.javadb.repository.ResourceRepository;
+import com.example.javadb.repository.UserCommunityRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * This class contains all the API routes for the system.
@@ -24,7 +30,7 @@ public class RouteController {
 
     private final UserRepository userRepository;
     private final CommunityGroupRepository communityGroupRepository;
-    private final ResourceRepository ResourceRepository;
+    private final ResourceRepository resourceRepository;
     private final UserCommunityRepository userCommunityRepository;
 
     @Autowired
@@ -125,8 +131,20 @@ public class RouteController {
             @RequestParam("description") String description) {
 
         try {
-            // Create the CommunityGroup object
-            CommunityGroup newGroup = new CommunityGroup(communityName, communityType, latitude, longitude, capacity, description);
+            // Convert the communityType string to the CommunityType enum
+            CommunityGroup.CommunityType type;
+            try {
+                type = CommunityGroup.CommunityType.valueOf(communityType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>("Invalid community type provided", HttpStatus.BAD_REQUEST);
+            }
+
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+            CommunityGroup newGroup = new CommunityGroup(
+                    communityName, type, latitude, longitude, capacity, description,
+                    currentTimestamp, currentTimestamp
+            );
 
             // Save the new CommunityGroup
             CommunityGroup savedGroup = communityGroupRepository.save(newGroup);
@@ -157,7 +175,7 @@ public class RouteController {
                                 group.setCommunityName(value);
                                 break;
                             case "communitytype":
-                                group.setCommunityType(CommunityType.valueOf(value.toUpperCase()));
+                                group.setCommunityType(CommunityGroup.CommunityType.valueOf(value.toUpperCase())); // Adjust if necessary based on your enum
                                 break;
                             case "latitude":
                                 group.setLatitude(Double.parseDouble(value));
@@ -234,9 +252,12 @@ public class RouteController {
     @GetMapping(value = "/getUser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUserById(@RequestParam("id") int userId) {
         try {
-            return userRepository.findById(userId)
-                    .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
-                    .orElse(new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND));
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             return handleException(e);
         }
@@ -308,7 +329,10 @@ public class RouteController {
 
         try {
             // Create a new User object
-            User newUser = new User(name, email, age, Sex.valueOf(sex.toUpperCase()), latitude, longitude);
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+            User newUser = new User(name, email, age, User.Sex.valueOf(sex.toUpperCase()), latitude,
+                longitude, currentTimestamp, currentTimestamp);
 
             // Save the new user
             User savedUser = userRepository.save(newUser);
@@ -345,7 +369,7 @@ public class RouteController {
                                 user.setAge(Integer.parseInt(value));
                                 break;
                             case "sex":
-                                user.setSex(Sex.valueOf(value.toUpperCase()));
+                                user.setSex(User.Sex.valueOf(value.toUpperCase())); // Assuming Sex is an enum
                                 break;
                             case "latitude":
                                 user.setLatitude(Double.parseDouble(value));
@@ -412,9 +436,12 @@ public class RouteController {
     @GetMapping(value = "/getResource", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getResourceById(@RequestParam("id") int resourceId) {
         try {
-            return resourceRepository.findById(resourceId)
-                    .map(resource -> new ResponseEntity<>(resource, HttpStatus.OK))
-                    .orElse(new ResponseEntity<>("Resource Not Found", HttpStatus.NOT_FOUND));
+            Resource resource = resourceRepository.findById(resourceId).orElse(null);
+            if (resource != null) {
+                return new ResponseEntity<>(resource, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Resource Not Found", HttpStatus.NOT_FOUND);
+            }
         } catch (Exception e) {
             return handleException(e);
         }
@@ -441,16 +468,22 @@ public class RouteController {
             @RequestParam("description") String description) {
 
         try {
+            // Convert the resourceType string to the ResourceType enum
+            Resource.ResourceType type;
+            try {
+                type = Resource.ResourceType.valueOf(resourceType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>("Invalid resource type provided", HttpStatus.BAD_REQUEST);
+            }
+
+            // Create the current timestamp
+            Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
             // Create the Resource object
-            Resource newResource = new Resource();
-            newResource.setResourceName(resourceName);
-            newResource.setResourceType(ResourceType.valueOf(resourceType.toUpperCase()));
-            newResource.setLatitude(latitude);
-            newResource.setLongitude(longitude);
-            newResource.setResourceHours(resourceHours);
-            newResource.setDescription(description);
-            newResource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-            newResource.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+            Resource newResource = new Resource(
+                    resourceName, type, latitude, longitude, resourceHours,
+                    description, currentTimestamp, currentTimestamp
+            );
 
             // Save the new Resource
             Resource savedResource = resourceRepository.save(newResource);
@@ -459,6 +492,7 @@ public class RouteController {
             return handleException(e);
         }
     }
+
 
     /**
      * Updates a specific attribute of a resource by its ID.
@@ -481,7 +515,7 @@ public class RouteController {
                                 resource.setResourceName(value);
                                 break;
                             case "resourcetype":
-                                resource.setResourceType(ResourceType.valueOf(value.toUpperCase()));
+                                resource.setResourceType(Resource.ResourceType.valueOf(value.toUpperCase())); // Assuming ResourceType is an enum
                                 break;
                             case "latitude":
                                 resource.setLatitude(Double.parseDouble(value));
@@ -545,8 +579,7 @@ public class RouteController {
 
             if (userExists && communityExists) {
                 // Add the association if it doesn't already exist
-                UserCommunityKey key = new UserCommunityKey(userId, communityId);
-                if (!userCommunityRepository.existsById(key)) {
+                if (!userCommunityRepository.existsByUserIdAndCommunityId(userId, communityId)) {
                     UserCommunity userCommunity = new UserCommunity(userId, communityId);
                     userCommunityRepository.save(userCommunity);
                     return new ResponseEntity<>("User added to community group successfully", HttpStatus.CREATED);
@@ -576,9 +609,9 @@ public class RouteController {
             @RequestParam("communityId") int communityId) {
         try {
             // Check if the association exists
-            UserCommunityKey key = new UserCommunityKey(userId, communityId);
-            if (userCommunityRepository.existsById(key)) {
-                userCommunityRepository.deleteById(key);
+            if (userCommunityRepository.existsByUserIdAndCommunityId(userId, communityId)) {
+                UserCommunity userCommunity = userCommunityRepository.findByUserIdAndCommunityId(userId, communityId);
+                userCommunityRepository.delete(userCommunity);
                 return new ResponseEntity<>("User removed from community group successfully", HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("User is not a member of the community group", HttpStatus.NOT_FOUND);

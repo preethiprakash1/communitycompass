@@ -49,8 +49,6 @@ public class User {
   }
 
   // Constructors
-  public User() {}
-
   public User(String name, String email, int age, Sex sex, double latitude,
               double longitude, Timestamp createdAt, Timestamp updatedAt) {
     this.name = name;
