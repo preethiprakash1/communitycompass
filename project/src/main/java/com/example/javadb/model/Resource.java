@@ -19,10 +19,10 @@ public class Resource {
   @Column(name = "resource_type", nullable = false)
   private ResourceType resourceType;
 
-  @Column(name = "latitude", precision = 9, scale = 6)
+  @Column(name = "latitude")
   private double latitude;
 
-  @Column(name = "longitude", precision = 9, scale = 6)
+  @Column(name = "longitude")
   private double longitude;
 
   @Column(name = "resource_hours", length = 50)
@@ -56,7 +56,7 @@ public class Resource {
     this.updatedAt = updatedAt;
   }
 
-  // Getters and Setters
+  // Getters and setters
   public int getResourceId() {
     return resource_id;
   }
@@ -66,6 +66,9 @@ public class Resource {
   }
 
   public void setResourceName(String resourceName) {
+    if (resourceName == null || resourceName.trim().isEmpty()) {
+      throw new IllegalArgumentException("Resource name cannot be null or empty");
+    }
     this.resourceName = resourceName;
   }
 
@@ -74,6 +77,9 @@ public class Resource {
   }
 
   public void setResourceType(ResourceType resourceType) {
+    if (resourceType == null) {
+      throw new IllegalArgumentException("Resource type cannot be null");
+    }
     this.resourceType = resourceType;
   }
 
@@ -82,6 +88,9 @@ public class Resource {
   }
 
   public void setLatitude(double latitude) {
+    if (latitude < -90 || latitude > 90) {
+      throw new IllegalArgumentException("Latitude must be between -90 and 90");
+    }
     this.latitude = latitude;
   }
 
@@ -90,6 +99,9 @@ public class Resource {
   }
 
   public void setLongitude(double longitude) {
+    if (longitude < -180 || longitude > 180) {
+      throw new IllegalArgumentException("Longitude must be between -180 and 180");
+    }
     this.longitude = longitude;
   }
 
@@ -98,6 +110,9 @@ public class Resource {
   }
 
   public void setResourceHours(String resourceHours) {
+    if (resourceHours == null) {
+      throw new IllegalArgumentException("Resource hours cannot be null");
+    }
     this.resourceHours = resourceHours;
   }
 
