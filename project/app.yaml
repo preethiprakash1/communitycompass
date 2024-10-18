@@ -1,0 +1,19 @@
+runtime: java17  # Specify Java 17 runtime
+instance_class: F2  # Specify instance class, adjust as necessary for your needs
+
+env: standard  # Use the standard environment
+
+automatic_scaling:  # Enable automatic scaling
+  target_cpu_utilization: 0.65  # Target CPU utilization for scaling
+  min_instances: 1  # Minimum number of instances to run
+  max_instances: 5  # Maximum number of instances to run
+
+# Optional: Environment variables
+env_variables:
+  SPRING_DATASOURCE_URL: jdbc:mysql://google/communitycompassdb?cloudSqlInstance=communitycompass-438103:us-east1:communitycompassdb&socketFactory=com.google.cloud.sql.mysql.SocketFactory
+  SPRING_DATASOURCE_USERNAME: root
+  SPRING_DATASOURCE_PASSWORD: root
+
+handlers:
+  - url: /.*
+    script: this field is required, but ignored
