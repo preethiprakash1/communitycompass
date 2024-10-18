@@ -1,176 +1,332 @@
 package com.example.javadb.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Represents a user entity in the system.
+ * A user can have multiple community memberships.
+ */
 @Entity
 @Table(name = "users")
-public class User {
+public final class User {
 
+  /** Maximum length for name or email fields. */
+  private static final int MAX_LENGTH = 100;
+
+  /** The unique ID of the user. */
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private int user_id;
+  private int userId;
 
-  @Column(name = "name", nullable = false, length = 100)
+  /** The name of the user. */
+  @Column(name = "name", nullable = false, length = MAX_LENGTH)
   private String name;
 
-  @Column(name = "email", nullable = false, unique = true, length = 100)
+  /** The email address of the user. */
+  @Column(name = "email", nullable = false, unique = true, length = MAX_LENGTH)
   private String email;
 
+  /** The age of the user. */
   @Column(name = "age")
   private int age;
 
+  /** The sex of the user. */
   @Enumerated(EnumType.STRING)
   @Column(name = "sex", nullable = false)
   private Sex sex;
 
+  /** The latitude of the user's location. */
   @Column(name = "latitude")
   private double latitude;
 
+  /** The longitude of the user's location. */
   @Column(name = "longitude")
   private double longitude;
 
+  /** Timestamp indicating when the user was created. */
   @Column(name = "created_at", nullable = false, updatable = false)
   private Timestamp createdAt;
 
+  /** Timestamp indicating when the user was last updated. */
   @Column(name = "updated_at", nullable = false)
   private Timestamp updatedAt;
 
-  // One to Many relationship with UserCommunity
+  /** List of community memberships associated with the user. */
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<UserCommunity> communityMembership;
 
-  // Enum for sex
+  /**
+   * Enum representing the sex of the user.
+   */
   public enum Sex {
-    MALE, FEMALE, OTHER
+    /** Male enum. */
+    MALE,
+    /** Female enum. */
+    FEMALE,
+    /** Other enum. */
+    OTHER
   }
 
-  // Constructors
-  public User() {}
-
-  public User(String name, String email, int age, Sex sex, double latitude,
-              double longitude, Timestamp createdAt, Timestamp updatedAt) {
-    this.name = name;
-    this.email = email;
-    this.age = age;
-    this.sex = sex;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+  /**
+   * Default constructor for JPA.
+   */
+  public User() {
   }
 
-  // Getters and setters
+  /**
+   * Constructs a new User with the specified attributes.
+   *
+   * @param newName the name of the user
+   * @param newEmail the email address of the user
+   * @param newAge the age of the user
+   * @param newSex the sex of the user
+   * @param newLatitude the latitude of the user's location
+   * @param newLongitude the longitude of the user's location
+   * @param newCreatedAt the creation timestamp
+   * @param newUpdatedAt the last updated timestamp
+   */
+  public User(final String newName, final String newEmail, final int newAge,
+              final Sex newSex, final double newLatitude,
+              final double newLongitude,
+              final Timestamp newCreatedAt, final Timestamp newUpdatedAt) {
+    this.name = newName;
+    this.email = newEmail;
+    this.age = newAge;
+    this.sex = newSex;
+    this.latitude = newLatitude;
+    this.longitude = newLongitude;
+    this.createdAt = newCreatedAt;
+    this.updatedAt = newUpdatedAt;
+  }
+
+  /**
+   * Gets the user ID.
+   *
+   * @return the user ID
+   */
   public int getUserId() {
-    return user_id;
+    return userId;
   }
 
+  /**
+   * Gets the user's name.
+   *
+   * @return the user's name
+   */
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    if (name == null || name.trim().isEmpty()) {
+  /**
+   * Sets the user's name.
+   *
+   * @param newName the name to set
+   * @throws IllegalArgumentException if the name is null or empty
+   */
+  public void setName(final String newName) {
+    if (newName == null || newName.trim().isEmpty()) {
       throw new IllegalArgumentException("Name cannot be null or empty");
     }
-    this.name = name;
+    this.name = newName;
   }
 
+  /**
+   * Gets the user's email address.
+   *
+   * @return the user's email address
+   */
   public String getEmail() {
     return email;
   }
 
-  public void setEmail(String email) {
-    if (email == null || !email.contains("@")) {
+  /**
+   * Sets the user's email address.
+   *
+   * @param newEmail the email to set
+   * @throws IllegalArgumentException if the email is invalid
+   */
+  public void setEmail(final String newEmail) {
+    if (newEmail == null || !newEmail.contains("@")) {
       throw new IllegalArgumentException("Invalid email address");
     }
-    this.email = email;
+    this.email = newEmail;
   }
 
+  /**
+   * Gets the user's age.
+   *
+   * @return the user's age
+   */
   public int getAge() {
     return age;
   }
 
-  public void setAge(int age) {
-    if (age < 0) {
+  /**
+   * Sets the user's age.
+   *
+   * @param newAge the age to set
+   * @throws IllegalArgumentException if the age is negative
+   */
+  public void setAge(final int newAge) {
+    if (newAge < 0) {
       throw new IllegalArgumentException("Age cannot be negative");
     }
-    this.age = age;
+    this.age = newAge;
   }
 
+  /**
+   * Gets the user's sex.
+   *
+   * @return the user's sex
+   */
   public Sex getSex() {
     return sex;
   }
 
-  public void setSex(Sex sex) {
-    if (sex == null) {
+  /**
+   * Sets the user's sex.
+   *
+   * @param newSex the sex to set
+   * @throws IllegalArgumentException if the sex is null
+   */
+  public void setSex(final Sex newSex) {
+    if (newSex == null) {
       throw new IllegalArgumentException("Sex cannot be null");
     }
-    this.sex = sex;
+    this.sex = newSex;
   }
 
+  /**
+   * Gets the latitude of the user's location.
+   *
+   * @return the latitude
+   */
   public double getLatitude() {
     return latitude;
   }
 
-  public void setLatitude(double latitude) {
-    this.latitude = latitude;
+  /**
+   * Sets the latitude of the user's location.
+   *
+   * @param newLatitude the latitude to set
+   */
+  public void setLatitude(final double newLatitude) {
+    this.latitude = newLatitude;
   }
 
+  /**
+   * Gets the longitude of the user's location.
+   *
+   * @return the longitude
+   */
   public double getLongitude() {
     return longitude;
   }
 
-  public void setLongitude(double longitude) {
-    this.longitude = longitude;
+  /**
+   * Sets the longitude of the user's location.
+   *
+   * @param newLongitude the longitude to set
+   */
+  public void setLongitude(final double newLongitude) {
+    this.longitude = newLongitude;
   }
 
+  /**
+   * Gets the timestamp of when the user was created.
+   *
+   * @return the creation timestamp
+   */
   public Timestamp getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Timestamp createdAt) {
-    this.createdAt = createdAt;
+  /**
+   * Sets the creation timestamp.
+   *
+   * @param newCreatedAt the timestamp to set
+   */
+  public void setCreatedAt(final Timestamp newCreatedAt) {
+    this.createdAt = newCreatedAt;
   }
 
+  /**
+   * Gets the timestamp of when the user was last updated.
+   *
+   * @return the last updated timestamp
+   */
   public Timestamp getUpdatedAt() {
     return updatedAt;
   }
 
-  public void setUpdatedAt(Timestamp updatedAt) {
-    this.updatedAt = updatedAt;
+  /**
+   * Sets the last updated timestamp.
+   *
+   * @param newUpdatedAt the timestamp to set
+   */
+  public void setUpdatedAt(final Timestamp newUpdatedAt) {
+    this.updatedAt = newUpdatedAt;
   }
 
+  /**
+   * Gets the user's community memberships.
+   *
+   * @return the list of community memberships
+   */
   public List<UserCommunity> getCommunityMembership() {
     return communityMembership;
   }
 
-  public void setCommunityMembership(List<UserCommunity> communityMembership) {
-    this.communityMembership = communityMembership;
+  /**
+   * Sets the user's community memberships.
+   *
+   * @param newCommunityMembership the community memberships to set
+   */
+  public void setCommunityMembership(final List<UserCommunity>
+                                             newCommunityMembership) {
+    this.communityMembership = newCommunityMembership;
   }
 
+  /**
+   * Gets the number of communities the user belongs to.
+   *
+   * @return the number of communities
+   */
   public int getNumberOfCommunities() {
-    if (communityMembership == null) {
-      return 0;
-    } else {
-      return communityMembership.size();
-    }
+    return communityMembership == null ? 0 : communityMembership.size();
   }
 
+  /**
+   * Returns a string representation of the user.
+   *
+   * @return the string representation of the user
+   */
   @Override
   public String toString() {
-    return "User{" +
-            "user_id=" + user_id +
-            ", name='" + name + '\'' +
-            ", email='" + email + '\'' +
-            ", age=" + age +
-            ", sex=" + sex +
-            ", latitude=" + latitude +
-            ", longitude=" + longitude +
-            ", createdAt=" + createdAt +
-            ", updatedAt=" + updatedAt +
-            ", communityMembership=" + communityMembership +
-            '}';
+    return "User{"
+            + "userId=" + userId
+            + ", name='" + name + '\''
+            + ", email='" + email + '\''
+            + ", age=" + age
+            + ", sex=" + sex
+            + ", latitude=" + latitude
+            + ", longitude=" + longitude
+            + ", createdAt=" + createdAt
+            + ", updatedAt=" + updatedAt
+            + ", communityMembership=" + communityMembership
+            + '}';
   }
 }
+
