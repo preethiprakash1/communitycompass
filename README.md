@@ -3,7 +3,7 @@ This is the GitHub repository for the Community Compass service.
 
 #### Team members:
 - Nicole Lin, nsl2126
-- ADD yourself here
+- Preethi Prakash, pp2769
 
 ## Building and Running a Local Instance
 In order to build and use our service you must install the following:
