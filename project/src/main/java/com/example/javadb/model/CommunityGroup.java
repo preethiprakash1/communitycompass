@@ -45,6 +45,8 @@ public class CommunityGroup {
     }
 
     // Constructors
+    public CommunityGroup() {}
+    
     public CommunityGroup(String communityName, CommunityType communityType,
                           double latitude, double longitude, int capacity,
                           String description, Timestamp createdAt, Timestamp updatedAt) {

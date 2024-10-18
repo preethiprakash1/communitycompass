@@ -43,6 +43,8 @@ public class Resource {
   }
 
   // Constructors
+  public Resource() {}
+
   public Resource(String resourceName, ResourceType resourceType, double latitude,
                   double longitude, String resourceHours, String description,
                   Timestamp createdAt, Timestamp updatedAt) {
