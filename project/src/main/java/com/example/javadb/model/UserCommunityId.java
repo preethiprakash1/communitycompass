@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class UserCommunityId implements Serializable {
-    private Long user;  // Assuming User has a Long id
-    private Long community;  // Assuming CommunityGroup has a Long id
+    private Integer user;  // Assuming User has a Long id
+    private Integer community;  // Assuming CommunityGroup has a Long id
 
     public UserCommunityId() {}
 
-    public UserCommunityId(Long user, Long community) {
+    public UserCommunityId(Integer user, Integer community) {
         this.user = user;
         this.community = community;
     }
