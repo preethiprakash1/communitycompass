@@ -190,7 +190,7 @@ mvn jacoco:report
 open target/site/jacoco/index.html
 ```
 You can also see the screenshot below for the most recent JaCoCo Report.
-![add jacoco image here]()
+![jacoco](jacoco.jpeg)
 
 ## Tools Used
 This section includes notes on tools and technologies used in building this service.
