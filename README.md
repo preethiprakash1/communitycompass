@@ -1,5 +1,5 @@
-# 4156 Mini Project README
-This is the GitHub repository for the Community Compass service associated with the COMS 4156 Advanced Software Engineering Mini Project. 
+# Community Compass README
+This is the GitHub repository for the Community Compass service. 
 
 #### Team members:
 - Nicole Lin, nsl2126
