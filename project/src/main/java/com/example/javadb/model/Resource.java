@@ -145,15 +145,15 @@ public class Resource {
   @Override
   public String toString() {
     return "Resource{" +
-            "resource_id=" + resource_id +
-            ", resourceName='" + resourceName + '\'' +
-            ", resourceType=" + resourceType +
-            ", latitude=" + latitude +
-            ", longitude=" + longitude +
-            ", resourceHours='" + resourceHours + '\'' +
-            ", description='" + description + '\'' +
-            ", createdAt=" + createdAt +
-            ", updatedAt=" + updatedAt +
-            '}';
+            "resource_id=" + resource_id
+            + ", resourceName='" + resourceName
+            + '\'' + ", resourceType=" + resourceType
+            + ", latitude=" + latitude
+            + ", longitude=" + longitude
+            + ", resourceHours='" + resourceHours
+            + '\'' + ", description='" + description
+            + '\'' + ", createdAt=" + createdAt
+            + ", updatedAt=" + updatedAt
+            + '}';
   }
 }

@@ -162,16 +162,16 @@ public class CommunityGroup {
     @Override
     public String toString() {
         return "CommunityGroup{" +
-                "community_id=" + community_id +
-                ", communityName='" + communityName + '\'' +
-                ", communityType=" + communityType +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", capacity=" + capacity +
-                ", description='" + description + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", userCommunities=" + userCommunities +
-                '}';
+                "community_id=" + community_id
+                + ", communityName='" + communityName
+                + '\'' + ", communityType=" + communityType
+                + ", latitude=" + latitude
+                + ", longitude=" + longitude
+                + ", capacity=" + capacity
+                + ", description='" + description
+                + '\'' + ", createdAt=" + createdAt
+                + ", updatedAt=" + updatedAt
+                + ", userCommunities=" + userCommunities
+                + '}';
     }
 }
