@@ -1,175 +1,347 @@
 package com.example.javadb.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Represents a community group in the system.
+ * A community group can have multiple users.
+ */
 @Entity
 @Table(name = "community_groups")
-public class CommunityGroup {
+public final class CommunityGroup {
 
+    /** Maximum community name length allowed. */
+    private static final int MAX_LENGTH = 100;
+    /** Maximum latitude allowed. */
+    private static final double MAX_LATITUDE = 90;
+    /** Minimum latitude allowed. */
+    private static final double MIN_LATITUDE = -90;
+    /** Maximum longitude allowed. */
+    private static final double MAX_LONGITUDE = 180;
+    /** Minimum longitude allowed. */
+    private static final double MIN_LONGITUDE = -180;
+
+    /** The community group ID. */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int community_id;
+    private int communityId;
 
-    @Column(name = "community_name", nullable = false, length = 100)
+    /** The community group name. */
+    @Column(name = "community_name", nullable = false, length = MAX_LENGTH)
     private String communityName;
 
+    /** The community group type. */
     @Enumerated(EnumType.STRING)
     @Column(name = "community_type", nullable = false)
     private CommunityType communityType;
 
+    /** The community group's location latitude. */
     @Column(name = "latitude")
     private double latitude;
 
+    /** The community group location longitude. */
     @Column(name = "longitude")
     private double longitude;
 
+    /** The community group capacity. */
     @Column(name = "capacity")
     private int capacity;
 
+    /** A community group description. */
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    /** Timestamp of when the community group was created. */
     @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
 
+    /** Timestamp of when the community group was last updated. */
     @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    /** List of user communities associated with this community group. */
+    @OneToMany(mappedBy = "community", cascade =
+            CascadeType.ALL, orphanRemoval = true)
     private List<UserCommunity> userCommunities;
 
+    /**
+     * Enum representing the types of community groups.
+     */
     public enum CommunityType {
-        MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER
+        /** Mental health community type. */
+        MENTAL_HEALTH,
+        /** Employment assistance community type. */
+        EMPLOYMENT_ASSISTANCE,
+        /** Other community type. */
+        OTHER
     }
 
-    // Constructors
-    public CommunityGroup() {}
-    
-    public CommunityGroup(String communityName, CommunityType communityType,
-                          double latitude, double longitude, int capacity,
-                          String description, Timestamp createdAt, Timestamp updatedAt) {
-        this.communityName = communityName;
-        this.communityType = communityType;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.capacity = capacity;
-        this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    /**
+     * Default non-args constructor.
+     */
+    public CommunityGroup() { }
+
+    /**
+     * Constructs a new CommunityGroup with the below attributes.
+     *
+     * @param commName the community group name
+     * @param commType the community group type
+     * @param lat the location latitude
+     * @param longi the location longitude
+     * @param cap the group capacity
+     * @param desc the group description
+     * @param createAt when the group was created timestamp
+     * @param updateAt when the group was last updated timestamp
+     */
+
+    public CommunityGroup(final String commName,
+                          final CommunityType commType,
+                          final double lat,
+                          final double longi, final int cap,
+                          final String desc, final Timestamp createAt,
+                          final Timestamp updateAt) {
+        this.communityName = commName;
+        this.communityType = commType;
+        this.latitude = lat;
+        this.longitude = longi;
+        this.capacity = cap;
+        this.description = desc;
+        this.createdAt = createAt;
+        this.updatedAt = updateAt;
     }
 
-    // Getters and setters
+    /**
+     * Gets community group ID.
+     *
+     * @return the community group ID
+     */
     public int getCommunityId() {
-        return community_id;
+        return communityId;
     }
 
+    /**
+     * Gets name of the community group.
+     *
+     * @return the name of the community group
+     */
     public String getCommunityName() {
         return communityName;
     }
 
-    public void setCommunityName(String communityName) {
-        if (communityName == null || communityName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Community name cannot be null or empty");
+    /**
+     * Sets name of the community group.
+     *
+     * @param commName the name to set
+     * @throws IllegalArgumentException if the name is null or empty
+     */
+    public void setCommunityName(final String commName) {
+        if (commName == null || commName.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Community name cannot be null or empty");
         }
-        this.communityName = communityName;
+        this.communityName = commName;
     }
 
+    /**
+     * Gets type of the community group.
+     *
+     * @return the type of the community group
+     */
     public CommunityType getCommunityType() {
         return communityType;
     }
 
-    public void setCommunityType(CommunityType communityType) {
-        if (communityType == null) {
+    /**
+     * Sets type of the community group.
+     *
+     * @param commType the type to set
+     * @throws IllegalArgumentException if the type is null
+     */
+    public void setCommunityType(final CommunityType commType) {
+        if (commType == null) {
             throw new IllegalArgumentException("Community type cannot be null");
         }
-        this.communityType = communityType;
+        this.communityType = commType;
     }
 
+    /**
+     * Gets list of user communities associated with this group.
+     *
+     * @return the list of user communities
+     */
     public List<UserCommunity> getUserCommunities() {
         return userCommunities;
     }
 
-    public void setUserCommunities(List<UserCommunity> userCommunities) {
-        this.userCommunities = userCommunities;
+    /**
+     * Sets list of user communities.
+     *
+     * @param userComm the list to set
+     */
+    public void setUserCommunities(final List<UserCommunity> userComm) {
+        this.userCommunities = userComm;
     }
 
+    /**
+     * Gets latitude of the community group's location.
+     *
+     * @return the latitude
+     */
     public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        if (latitude < -90 || latitude > 90) {
-            throw new IllegalArgumentException("Latitude must be between -90 and 90");
+    /**
+     * Sets latitude of the community group's location.
+     *
+     * @param lat the latitude to set
+     * @throws IllegalArgumentException if latitude is out of range.
+     */
+    public void setLatitude(final double lat) {
+        if (lat < MIN_LATITUDE || lat > MAX_LATITUDE) {
+            throw new IllegalArgumentException(
+                    "Latitude must be between -90 and 90");
         }
-        this.latitude = latitude;
+        this.latitude = lat;
     }
 
+    /**
+     * Gets longitude of the community group's location.
+     *
+     * @return the longitude
+     */
     public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
-        if (longitude < -180 || longitude > 180) {
-            throw new IllegalArgumentException("Longitude must be between -180 and 180");
+    /**
+     * Sets longitude of the community group's location.
+     *
+     * @param longi the longitude to set
+     * @throws IllegalArgumentException if longitude is out of range.
+     */
+    public void setLongitude(final double longi) {
+        if (longi < MIN_LONGITUDE || longi > MAX_LONGITUDE) {
+            throw new IllegalArgumentException(
+                    "Longitude must be between -180 and 180");
         }
-        this.longitude = longitude;
+        this.longitude = longi;
     }
 
+    /**
+     * Gets capacity of the community group.
+     *
+     * @return the capacity
+     */
     public int getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
-        if (capacity < 0) {
-            throw new IllegalArgumentException("Capacity cannot be negative");
+    /**
+     * Sets capacity of the community group.
+     *
+     * @param cap the capacity to set
+     * @throws IllegalArgumentException if capacity is negative
+     */
+    public void setCapacity(final int cap) {
+        if (cap < 0) {
+            throw new IllegalArgumentException(
+                    "Capacity cannot be negative");
         }
-        this.capacity = capacity;
+        this.capacity = cap;
     }
 
+    /**
+     * Gets description of the community group.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    /**
+     * Sets description of the community group.
+     *
+     * @param desc the description to set
+     */
+    public void setDescription(final String desc) {
+        this.description = desc;
     }
 
+    /**
+     * Gets creation timestamp of the community group.
+     *
+     * @return the creation timestamp
+     */
     public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    /**
+     * Sets creation timestamp.
+     *
+     * @param createAt the timestamp to set
+     */
+    public void setCreatedAt(final Timestamp createAt) {
+        this.createdAt = createAt;
     }
 
+    /**
+     * Gets last updated timestamp of the community group.
+     *
+     * @return the last updated timestamp
+     */
     public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
+    /**
+     * Sets last updated timestamp.
+     *
+     * @param updateAt the timestamp to set
+     */
+    public void setUpdatedAt(final Timestamp updateAt) {
+        this.updatedAt = updateAt;
     }
 
+    /**
+     * Gets number of users in this community group.
+     *
+     * @return the number of users
+     */
     public int getNumberOfUsers() {
-        if (userCommunities == null) {
-            return 0;
-        } else {
-            return userCommunities.size();
-        }
+        return userCommunities == null ? 0 : userCommunities.size();
     }
+
+    /**
+     * Returns string representation of the community group.
+     *
+     * @return the string representation
+     */
     @Override
     public String toString() {
-        return "CommunityGroup{" +
-                "community_id=" + community_id
-                + ", communityName='" + communityName
-                + '\'' + ", communityType=" + communityType
+        return "CommunityGroup{"
+                + "communityId=" + communityId
+                + ", communityName='" + communityName + '\''
+                + ", communityType=" + communityType
                 + ", latitude=" + latitude
                 + ", longitude=" + longitude
                 + ", capacity=" + capacity
-                + ", description='" + description
-                + '\'' + ", createdAt=" + createdAt
+                + ", description='" + description + '\''
+                + ", createdAt=" + createdAt
                 + ", updatedAt=" + updatedAt
                 + ", userCommunities=" + userCommunities
                 + '}';

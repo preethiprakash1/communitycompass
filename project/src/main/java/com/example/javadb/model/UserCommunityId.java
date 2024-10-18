@@ -3,25 +3,58 @@ package com.example.javadb.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Represents the composite key for UserCommunity.
+ */
 public class UserCommunityId implements Serializable {
-    private Integer user;  // Assuming User has a Long id
-    private Integer community;  // Assuming CommunityGroup has a Long id
+    /** User ID. */
+    private Integer user;
+    /** Community group ID. */
+    private Integer community;
 
-    public UserCommunityId() {}
+    /**
+     * Default no-args constructor.
+     */
+    public UserCommunityId() {
 
-    public UserCommunityId(Integer user, Integer community) {
-        this.user = user;
-        this.community = community;
     }
 
+    /**
+     * Constructs a UserCommunityId with the given user and community IDs.
+     *
+     * @param userId the user ID
+     * @param communityId the community ID
+     */
+    public UserCommunityId(final Integer userId, final Integer communityId) {
+        this.user = userId;
+        this.community = communityId;
+    }
+
+
+    /**
+     * Checks if the given object is equal to the UserCommunityId.
+     *
+     * @param o the object to compare
+     * @return true if equal, otherwise false
+     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserCommunityId)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+         return true;
+        }
+        if (!(o instanceof UserCommunityId)) {
+            return false;
+        }
         UserCommunityId that = (UserCommunityId) o;
-        return Objects.equals(user, that.user) && Objects.equals(community, that.community);
+        return Objects.equals(user, that.user)
+                && Objects.equals(community, that.community);
     }
 
+    /**
+     * Computes the hash code for this UserCommunityId.
+     *
+     * @return the hash code
+     */
     @Override
     public int hashCode() {
         return Objects.hash(user, community);

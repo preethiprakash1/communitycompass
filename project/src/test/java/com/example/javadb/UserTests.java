@@ -71,6 +71,7 @@ class UserTests {
     emptyUser.setCreatedAt(now);
     emptyUser.setUpdatedAt(now);
 
+
     assertEquals("Oprah Winfrey", emptyUser.getName());
     assertEquals("oprah@example.com", emptyUser.getEmail());
     assertEquals(70, emptyUser.getAge());
@@ -124,7 +125,7 @@ class UserTests {
   @Test
   void testToString() {
     String expected = "User{" +
-            "user_id=0" +
+            "userId=0" +
             ", name='Adam Sandler'" +
             ", email='adam@example.com'" +
             ", age=58" +
