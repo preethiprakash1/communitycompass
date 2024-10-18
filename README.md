@@ -180,7 +180,7 @@ target/site/checkstyle.html
 open target/site/checkstyle.html
 ```
 You can also see the screenshot below for the most recent Checkstyle Report.
-![add checkstyle image here]()
+![PNG image.png]()
 
 ## Branch Coverage Reporting
 We used JaCoCo to perform branch analysis in order to see the branch coverage of the relevant code within the code base. You can use the following command inside the project directory to see the report:
