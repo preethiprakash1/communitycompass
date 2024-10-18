@@ -4,6 +4,8 @@ This is the GitHub repository for the Community Compass service.
 #### Team members:
 - Nicole Lin, nsl2126
 - Preethi Prakash, pp2769
+- Divya Tadimeti, dt2760
+- Aditi Mutagi, agm2208
 
 ## Building and Running a Local Instance
 In order to build and use our service you must install the following:
@@ -171,7 +173,7 @@ This section describes the endpoints that our service provides, along with their
   - HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
 
 ## Style Checking Report
-We used the tool "checkstyle" to check the style of our code and generate style checking reports. You can use the following command inside the project directory to see the report:
+We used the tool "checkstyle" to check the style of our code and generate style checking reports. In particular, we used the maven default sun_checks.xml (taken from https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/sun_checks.xml), with a minor change to allow for more than 7 parameters for method or constructor, since there are a few cases where we have 8. The checkstyle.xml file reflects this. You can use the following command inside the project directory to see the report:
 ```
 mvn checkstyle:checkstyle 
 target/site/checkstyle.html
@@ -190,15 +192,11 @@ open target/site/jacoco/index.html
 You can also see the screenshot below for the most recent JaCoCo Report.
 ![add jacoco image here]()
 
-## Static Code Analysis
-We used PMD to perform static analysis on my codebase. Inside the project directory, do <code> pmd check -d project/src/main/java/com/example/javadb -R rulesets/java/quickstart.xml -f text </code> to see the PMD report. Or you can see below for the most recent output.
-![add PMD report here]()
-
 ## Tools Used
 This section includes notes on tools and technologies used in building this service.
 - Maven Package Manager
 - Checkstyle
-  - I utilize Checkstyle for code quality reporting.
+  - We utilize Checkstyle for code quality reporting.
 - PMD
   - PMD is employed for static analysis of my Java code.
 - JUnit
