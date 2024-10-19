@@ -47,130 +47,137 @@ This section describes the endpoints that our service provides, along with their
 - Upon Success: N/A
 - Upon Failure: N/A
 
-#### GET /retrieveDept
-- Expected Input Parameters: deptCode (String)
-- Expected Output: A ResponseEntity object containing either the details of the Department and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Returns the details of the specified department.
-- Upon Success: HTTP 200 Status Code is returned with the department details in the response body.
-- Upon Failure: HTTP 404 Status Code with "Department Not Found" if the specified department does not exist.
+#### GET /getCommunityGroups
+- Expected Input Parameters: N/A
+- Expected Output: A ResponseEntity object containing either the list of community groups or a message indicating no groups were found.
+- Description: Retrieves all community groups from the database.
+- Upon Success: HTTP 200 Status Code is returned with the list of community groups in the response body.
+- Upon Failure: HTTP 404 Status Code with "No Community Groups Found" if no groups are available.
 
-#### GET /retrieveCourse
-- Expected Input Parameters: deptCode (String), courseCode (int)
-- Expected Output: A ResponseEntity object containing either the details of the course and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves the details of the requested course.
-- Upon Success: HTTP 200 Status Code is returned with the course details.
+#### GET /getCommunityGroup
+- Expected Input Parameters:
+  - id (int): The ID of the community group.
+  - attribute (String, optional): The specific attribute of the community group to retrieve.
+- Expected Output: A ResponseEntity object containing either the full community group details or the value of the requested attribute.
+- Description: Returns either the details of the specified community group or a specific attribute if provided.
+- Upon Success: HTTP 200 Status Code is returned with the community group details or the requested attribute.
 - Upon Failure:
-  - HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
-  - HTTP 404 Status Code with "Department Not Found" if the specified department does not exist.
+  - HTTP 404 Status Code with "Community Group Not Found" if the group does not exist.
+  - HTTP 404 Status Code with "Attribute Not Found" if the provided attribute does not exist.
 
-#### GET /isCourseFull
-- Expected Input Parameters: deptCode (String), courseCode (int)
-- Expected Output: A ResponseEntity object containing either a boolean indicating course capacity status and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves whether the course has reached its enrollment capacity.
-- Upon Success: HTTP 200 Status Code is returned with the capacity status, either "true" or "false".
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+#### POST /createCommunityGroup
+- Expected Input Parameters: communityName (String), communityType (String), latitude (double), longitude (double), capacity (int), description (String)
+- Expected Output: A ResponseEntity object indicating the success or failure of the creation.
+- Description: Creates a new community group with the provided information.
+- Upon Success: HTTP 201 Status Code is returned along with the details of the newly created group.
+- Upon Failure: HTTP 400 Status Code with "Invalid community type provided" if the type is invalid.
 
-#### GET /getMajorCountFromDept
-- Expected Input Parameters: deptCode (String)
-- Expected Output: A ResponseEntity object containing either number of majors for the specified department and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves the number of majors in the specified department.
-- Upon Success: HTTP 200 Status Code is returned along with the number of majors.
-- Upon Failure: HTTP 404 Status Code with "Department Not Found" if the specified department does not exist.
-
-#### GET /idDeptChair
-- Expected Input Parameters: deptCode (String)
-- Expected Output: A ResponseEntity object containing either department chair of the specified department and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves the department chair for the specified department.
-- Upon Success: HTTP 200 Status Code is returned with the department chair's name.
-- Upon Failure: HTTP 404 Status Code with "Department Not Found" if the specified department does not exist.
-
-#### GET /findCourseLocation
-- Expected Input Parameters: deptCode (String), courseCode (int)
-- Expected Output: A ResponseEntity object containing either the location of the course and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves the location for the specified course.
-- Upon Success: HTTP 200 Status Code is returned with the course location.
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
-
-#### GET /findCourseInstructor
-- Expected Input Parameters: deptCode (String), courseCode (int)
-- Expected Output: A ResponseEntity object containing either the course instructor and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves the instructor for the specified course.
-- Upon Success: HTTP 200 Status Code is returned with the instructor's name.
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
-
-#### GET /findCourseTime
-- Expected Input Parameters: deptCode (String), courseCode (int)
-- Expected Output: A ResponseEntity object containing either the details of the course timeslot and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Retrieves the time a specific course meets based on department and course codes.
-- Upon Success: HTTP 200 Status Code is returned along with the course time.
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
-
-#### GET /retrieveCourses
-- Expected Input Parameters: courseCode (int)
-- Expected Output: A ResponseEntity object containing a formatted representation of all courses with the specified course code and an HTTP 200 response or, an appropriate message indicating the proper response.
-- Description: Lists all courses with the specified course code across all departments.
-- Upon Success: HTTP 200 Status Code is returned along with the course details.
-- Upon Failure: HTTP 404 Status Code with "No courses found with the code" if there are no courses that match the specific course code.
-
-#### PATCH /addMajorToDept
-- Expected Input Parameters: deptCode (String)
-- Expected Output: A ResponseEntity object that provides a message indicating the successful addition of a major to the specified department, accompanied by an HTTP 200 response, or an appropriate message stating that the department was not found.
-- Description: Adds a student to a specified department's major.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Attribute was updated successfully"
-- Upon Failure: HTTP 404 Status Code with "Department Not Found" if the specified department does not exist.
-
-#### PATCH /removeMajorFromDept
-- Expected Input Parameters: deptCode (String)
-- Expected Output: A ResponseEntity object that provides a message confirming the successful removal of a major from the specified department, along with an HTTP 200 response, or an appropriate message indicating that the department was not found.
-- Description: Removes a student from a specified department's major.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Attribute was updated or is at minimum."
-- Upon Failure: HTTP 404 Status Code with "Department Not Found" if the specified department does not exist.
-
-#### PATCH /dropStudentFromCourse 
-- Expected Input Parameters: deptCode (String), courseCode (int)
-- Expected Output: A ResponseEntity object that provides a message confirming whether a student was successfully dropped from the specified course, along with an HTTP 200 response if the operation was successful, a HTTP 400 response if the student could not be dropped, or an appropriate message indicating that the course was not found.
-- Description: Drops a student from a specified course.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Student has been dropped."
+#### PATCH /updateCommunityGroup
+- Expected Input Parameters: 
+  - id (int): The ID of the community group
+  - attribute (String): The attribute to update.
+  - value (String): The new value for the specified attribute.
+- Expected Output: A ResponseEntity object confirming the successful update or failure.
+- Description: Updates the specified attribute of the community group.
+- Upon Success: HTTP 200 Status Code with the updated community group details.
 - Upon Failure:
-  - HTTP 400 Status Code with "Course full. Student has not been enrolled." if the course is full.
-  - HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+  - HTTP 404 Status Code with "Community Group Not Found" if the group does not exist.
+  - HTTP 404 Status Code with "Attribute Not Found" if the attribute is invalid.
 
-#### PATCH /setEnrollmentCount
-- Expected Input Parameters: deptCode (String), courseCode (int), count (int, the new enrollment count)
-- Expected Output: A ResponseEntity object that provides a message confirming the successful update of the enrollment count for the specified course, along with an HTTP 200 response, or an appropriate message indicating that the course was not found.
-- Description: Updates the enrollment count for a specific course.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Attributed was updated successfully."
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+#### DELETE /deleteCommunityGroup
+- Expected Input Parameters: id (int): The ID of the community group.
+- Expected Output: A ResponseEntity object indicating the result of the deletion operation.
+- Description: Deletes the specified community group.
+- Upon Success: HTTP 200 Status Code with "Community Group Deleted Successfully".
+- Upon Failure: HTTP 404 Status Code with "Community Group Not Found" if the group does not exist.
 
-#### PATCH /changeCourseTime
-- Expected Input Parameters: deptCode (String), courseCode (int), time (String)
-- Expected Output: A ResponseEntity object that provides a message confirming the successful update of the course time for the specified course, along with an HTTP 200 response, or an appropriate message indicating that the course was not found.
-- Description: Changes the meeting time of a course.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Attributed was updated successfully."
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+#### GET /getUsers
+- Expected Input Parameters: N/A
+- Expected Output: A ResponseEntity object containing a list of users or a message indicating no users were found.
+- Description: Retrieves all users from the database.
+- Upon Success: HTTP 200 Status Code with the list of users.
+- Upon Failure: HTTP 404 Status Code with "No Users Found" if there are no users in the system.
 
-#### PATCH /changeCourseTeacher
-- Expected Input Parameters: deptCode (String), courseCode (int), teacher (String, the new instructor name)
-- Expected Output: A ResponseEntity object that provides a message confirming the successful update of the teacher for the specified course, along with an HTTP 200 response, or an appropriate message indicating that the course was not found.
-- Description: Changes the instructor of a course.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Attributed was updated successfully."
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+#### GET /getUser
+- Expected Input Parameters:
+  - id (int): The ID of the user.
+  - attribute (String, optional): The specific attribute of the user to retrieve.
+- Expected Output: A ResponseEntity object containing either the full user details or the value of the requested attribute.
+- Description: Returns the details of the specified user or a specific attribute if requested.
+- Upon Success: HTTP 200 Status Code with the user details or the requested attribute.
+-  Upon Failure:
+  - HTTP 404 Status Code with "User Not Found" if the user does not exist.
+  - HTTP 404 Status Code with "Attribute Not Found" if the provided attribute does not exist.
 
-#### PATCH /changeCourseLocation
-- Expected Input Parameters: deptCode (String), courseCode (int), location (String)
-- Expected Output: A ResponseEntity object that provides a message confirming the successful update of the location for the specified course, along with an HTTP 200 response, or an appropriate message indicating that the course was not found.
-- Description: Updates the location for a specified course in a department.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Attributed was updated successfully."
-- Upon Failure: HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+#### POST /createUser
+- Expected Input Parameters: name (String), email (String), age (int), sex (String), latitude (double), longitude (double)
+- Expected Output: A ResponseEntity object indicating the success or failure of the user creation.
+- Description: Creates a new user with the provided information.
+- Upon Success: HTTP 201 Status Code is returned along with the details of the newly created user.
+- Upon Failure: HTTP 400 Status Code if the user data is invalid.
 
-#### PATCH /enrollStudentInCourse
-- Expected Input Parameters: deptCode (String), courseCode (int),
-- Expected Output: A ResponseEntity object that provides a message confirming the successful enrollment of a student in the specified course, along with an HTTP 200 response, or an appropriate message indicating that the course is full or that the course was not found.
-- Description: Attempts to enroll a student in the specified course.
-- Upon Success: HTTP 200 Status Code is returned along with the message "Student has been enrolled."
+#### PATCH /updateUser
+- Expected Input Parameters:
+  - id (int): The ID of the user.
+  - attribute (String): The attribute to update.
+  - value (String): The new value for the specified attribute.
+- Expected Output: A ResponseEntity object confirming the successful update or failure.
+- Description: Updates the specified attribute of the user.
+- Upon Success: HTTP 200 Status Code with the updated user details.
 - Upon Failure:
-  - HTTP 400 Status Code with "Course full. Student has not been enrolled." if the course is full.
-  - HTTP 404 Status Code with "Course Not Found" if the specified course does not exist.
+  - HTTP 404 Status Code with "User Not Found" if the user does not exist.
+  - HTTP 404 Status Code with "Attribute Not Found" if the attribute is invalid.
+
+#### DELETE /deleteUser
+- Expected Input Parameters: id (int): The ID of the user.
+- Expected Output: A ResponseEntity object indicating the result of the deletion operation.
+- Description: Deletes the specified user.
+- Upon Success: HTTP 200 Status Code with "User Deleted Successfully".
+- Upon Failure: HTTP 404 Status Code with "User Not Found" if the user does not exist.
+
+#### GET /getAllResources
+- Expected Input Parameters: N/A
+- Expected Output: A ResponseEntity object containing a list of all resources.
+- Description: Retrieves all resources from the database.
+- Upon Success: HTTP 200 Status Code is returned with the list of resources.
+- Upon Failure: N/A
+
+#### GET /getResource
+- Expected Input Parameters:
+  - id (int): The ID of the resource.
+  - attribute (String, optional): The specific attribute of the resource to retrieve.
+- Expected Output: A ResponseEntity object containing either the full resource details or the value of the requested attribute.
+- Description: Returns the details of the specified resource or a specific attribute if requested.
+- Upon Success: HTTP 200 Status Code with the resource details or the requested attribute.
+- Upon Failure:
+  - HTTP 404 Status Code with "Resource Not Found" if the resource does not exist.
+  - HTTP 404 Status Code with "Attribute Not Found" if the attribute is invalid.
+
+#### POST /createResource
+- Expected Input Parameters: resourceName (String), resourceType (String), latitude (double), longitude (double),resourceHours (String), description (String)
+- Expected Output: A ResponseEntity object indicating the success or failure of the resource creation.
+- Description: Creates a new resource with the provided information.
+- Upon Success: HTTP 201 Status Code is returned along with the details of the newly created resource.
+- Upon Failure: HTTP 400 Status Code with "Invalid resource type provided" if the type is invalid.
+
+#### PATCH /updateResource
+- Expected Input Parameters:
+  - id (int): The ID of the resource.
+  - attribute (String): The attribute to update.
+  - value (String): The new value for the specified attribute.
+- Expected Output: A ResponseEntity object confirming the successful update or failure.
+- Description: Updates the specified attribute of the resource.
+- Upon Success: HTTP 200 Status Code with the updated resource details.
+- Upon Failure:
+  - HTTP 404 Status Code with "Resource Not Found" if the resource does not exist.
+  - HTTP 404 Status Code with "Attribute Not Found" if the attribute is invalid.
+
+#### DELETE /deleteResource
+- Expected Input Parameters: id (int): The ID of the resource.
+- Expected Output: A ResponseEntity object indicating the result of the deletion operation.
+- Description: Deletes the specified resource.
+- Upon Success: HTTP 200 Status Code with "Resource Deleted Successfully".
+- Upon Failure: HTTP 404 Status Code with "Resource Not Found" if the resource does not exist.
 
 ## Style Checking Report
 We used the tool "checkstyle" to check the style of our code and generate style checking reports. In particular, we used the maven default sun_checks.xml (taken from https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/sun_checks.xml), with a minor change to allow for more than 7 parameters for method or constructor, since there are a few cases where we have 8. The checkstyle.xml file reflects this. You can use the following command inside the project directory to see the report:
@@ -197,8 +204,6 @@ This section includes notes on tools and technologies used in building this serv
 - Maven Package Manager
 - Checkstyle
   - We utilize Checkstyle for code quality reporting.
-- PMD
-  - PMD is employed for static analysis of my Java code.
 - JUnit
   - JUnit tests get run automatically as part of the CI pipeline.
 - JaCoCo
