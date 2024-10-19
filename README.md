@@ -179,6 +179,30 @@ This section describes the endpoints that our service provides, along with their
 - Upon Success: HTTP 200 Status Code with "Resource Deleted Successfully".
 - Upon Failure: HTTP 404 Status Code with "Resource Not Found" if the resource does not exist.
 
+#### POST /addUserToCommunity
+- Expected Input Parameters:
+  - userId (int): The ID of the user.
+  - communityId (int): The ID of the community group.
+- Expected Output: A ResponseEntity object indicating the success or failure of adding the user to the community.
+- Description: Adds a user to the specified community group.
+- Upon Success: HTTP 201 Status Code with "User added to community group successfully".
+- Upon Failure:
+  - HTTP 404 Status Code with "User Not Found" if the user does not exist.
+  - HTTP 404 Status Code with "Community Group Not Found" if the community does not exist.
+  - HTTP 409 Status Code with "User is already a member of the community group" if the user is already associated with the group.
+
+#### DELETE /removeUserFromCommunity
+- Expected Input Parameters:
+  - userId (int): The ID of the user.
+  - communityId (int): The ID of the community group.
+- Expected Output: A ResponseEntity object indicating the success or failure of removing the user from the community.
+- Description: Removes a user from the specified community group.
+- Upon Success: HTTP 200 Status Code with "User removed from community group successfully".
+- Upon Failure:
+  - HTTP 404 Status Code with "User Not Found" if the user does not exist.
+  - HTTP 404 Status Code with "Community Group Not Found" if the community does not exist.
+  - HTTP 404 Status Code with "User is not a member of the community group" if the user is not associated with the group.
+
 ## Style Checking Report
 We used the tool "checkstyle" to check the style of our code and generate style checking reports. In particular, we used the maven default sun_checks.xml (taken from https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/sun_checks.xml), with a minor change to allow for more than 7 parameters for method or constructor, since there are a few cases where we have 8. The checkstyle.xml file reflects this. You can use the following command inside the project directory to see the report:
 ```
