@@ -1,7 +1,9 @@
 package com.example.javadb.controller;
 
 import com.example.javadb.model.CommunityGroup;
+import com.example.javadb.model.CommunityGroup.CommunityType;
 import com.example.javadb.model.Resource;
+import com.example.javadb.model.Resource.ResourceType;
 import com.example.javadb.model.User;
 import com.example.javadb.model.UserCommunity;
 import com.example.javadb.repository.CommunityGroupRepository;
@@ -161,6 +163,29 @@ public class RouteController {
               })
               .orElse(new ResponseEntity<>(
                       "Community Group Not Found", HttpStatus.NOT_FOUND));
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Retrieves community groups of a given type.
+   *
+   * @param type The type of the community group requested (MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER).
+   * @return A {@code ResponseEntity} containing the list of community groups of the specified type or
+   *         a message if no community groups of the specified type exist.
+   */
+  @GetMapping(value = "/getCommunityGroupsByType", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getCommunityGroupsByType(@RequestParam("type") final CommunityType communityType) {
+    try {
+      List<CommunityGroup> communities = communityGroupRepository.findByCommunityType(communityType);
+
+      if (communities.isEmpty()) {
+        return new ResponseEntity<>("No community groups were found for type: " + communityType,
+                HttpStatus.NOT_FOUND);
+      }
+
+      return new ResponseEntity<>(communities, HttpStatus.OK);
     } catch (Exception e) {
       return handleException(e);
     }
@@ -491,6 +516,29 @@ public class RouteController {
   getAllResources() {
     try {
       List<Resource> resources = resourceRepository.findAll();
+      return new ResponseEntity<>(resources, HttpStatus.OK);
+    } catch (Exception e) {
+      return handleException(e);
+    }
+  }
+
+  /**
+   * Retrieves resources of a given type.
+   *
+   * @param type The type of the resource requested (SHELTER, FOOD_BANK, CLINIC, RESTROOM, OTHER).
+   * @return A {@code ResponseEntity} containing the list of resources of the specified type or
+   *         a message if no resources of the specified type exist.
+   */
+  @GetMapping(value = "/getResourcesByType", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getResourcesByType(@RequestParam("type") final ResourceType resourceType) {
+    try {
+      List<Resource> resources = resourceRepository.findByResourceType(resourceType);
+
+      if (resources.isEmpty()) {
+        return new ResponseEntity<>("No resources were found for type: " + resourceType,
+                HttpStatus.NOT_FOUND);
+      }
+
       return new ResponseEntity<>(resources, HttpStatus.OK);
     } catch (Exception e) {
       return handleException(e);

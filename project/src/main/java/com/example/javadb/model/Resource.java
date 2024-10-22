@@ -35,6 +35,7 @@ public final class Resource {
   /** The unique ID of the resource. */
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "resource_id")
   private int resourceId;
 
   /** The resource name. */

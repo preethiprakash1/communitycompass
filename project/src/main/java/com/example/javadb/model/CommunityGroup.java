@@ -36,6 +36,7 @@ public final class CommunityGroup {
     /** The community group ID. */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "community_id")
     private int communityId;
 
     /** The community group name. */
