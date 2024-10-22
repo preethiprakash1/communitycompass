@@ -197,7 +197,7 @@ public class RouteController {
   }
 
     /**
-     * Retrieves the closest community group of a given type based 
+     * Retrieves the closest community group of a given type based
      * on the user's location.
      *
      * @param communityType The type of the community group requested
