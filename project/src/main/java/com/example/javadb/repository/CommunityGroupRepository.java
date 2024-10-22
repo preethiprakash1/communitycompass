@@ -12,6 +12,11 @@ import java.util.List;
 public interface CommunityGroupRepository
         extends JpaRepository<CommunityGroup, Integer> {
 
+  /**
+   * Returns a list of community groups of the specified type.
+   * @param type The community type that is requested.
+   * @return A list containing the community groups of the specified type.
+   */
   List<CommunityGroup> findByCommunityType(CommunityType type);
 
 }
