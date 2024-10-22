@@ -65,6 +65,23 @@ This section describes the endpoints that our service provides, along with their
   - HTTP 404 Status Code with "Community Group Not Found" if the group does not exist.
   - HTTP 404 Status Code with "Attribute Not Found" if the provided attribute does not exist.
 
+#### GET /getCommunityGroupsByType
+- Expected Input Parameters: type (String): The type of the community group (MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER).
+- Expected Output: A ResponseEntity containing a list of community groups of the specified type.
+- Description: Retrieves all community groups of the specified type from the database.
+- Upon Success: HTTP 200 Status Code with the list of community groups of the specified type.
+- Upon Failure: HTTP 404 Status Code with the message "No community groups were found for type: {communityType}" if no community groups exist for the specified type.
+
+#### GET /getClosestCommunityGroup
+- Expected Input Parameters:
+  - type (String): The type of the community group (MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER).
+  - latitude (double): The latitude of the user's location.
+  - longitude (double): The longitude of the user's location.
+- Expected Output: A ResponseEntity containing the details of the closest community group of the specified type.
+- Description: Finds and returns the community group of the specified type that is closest to the user's location based on Euclidean distance.
+- Upon Success: HTTP 200 Status Code with the details of the closest community group.
+- Upon Failure: HTTP 404 Status Code with the message "No community groups were found for type: {communityType}" if no community groups exist for the specified type.
+
 #### POST /createCommunityGroup
 - Expected Input Parameters: communityName (String), communityType (String), latitude (double), longitude (double), capacity (int), description (String)
 - Expected Output: A ResponseEntity object indicating the success or failure of the creation.
@@ -141,6 +158,23 @@ This section describes the endpoints that our service provides, along with their
 - Description: Retrieves all resources from the database.
 - Upon Success: HTTP 200 Status Code is returned with the list of resources.
 - Upon Failure: N/A
+
+#### GET /getResourcesByType
+- Expected Input Parameters: type (String): The type of the resource (SHELTER, FOOD_BANK, CLINIC, RESTROOM, OTHER).
+- Expected Output: A ResponseEntity containing a list of resources of the specified type.
+- Description: Retrieves all resources of the specified type.
+- Upon Success: HTTP 200 Status Code with the list of resources of the specified type.
+- Upon Failure: HTTP 404 Status Code with the message "No resources were found for type: {resourceType}" if no resources exist for the specified type.
+
+#### GET /getClosestResource
+- Expected Input Parameters:
+  - type (String): The type of the resource (SHELTER, FOOD_BANK, CLINIC, RESTROOM, OTHER).
+  - latitude (double): The latitude of the user's location.
+  - longitude (double): The longitude of the user's location.
+- Expected Output: A ResponseEntity containing the details of the closest resource of the specified type.
+- Description: Finds and returns the resource of the specified type that is closest to the user's location based on Euclidean distance.
+- Upon Success: HTTP 200 Status Code with the details of the closest resource.
+- Upon Failure: HTTP 404 Status Code with the message "No resources were found for type: {resourceType}" if no resources exist for the specified type.
 
 #### GET /getResource
 - Expected Input Parameters:
