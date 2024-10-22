@@ -191,6 +191,61 @@ public class RouteController {
     }
   }
 
+    /**
+     * Retrieves the closest community group of a given type based on the user's location.
+     *
+     * @param communityType The type of the community group requested (MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER).
+     * @param latitude      The latitude of the user's location.
+     * @param longitude     The longitude of the user's location.
+     * @return A {@code ResponseEntity} containing the closest community group of the specified type or a message
+     *         if no community groups of the specified type exist.
+     */
+    @GetMapping(value = "/getClosestCommunityGroup", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getClosestCommunityGroup(
+            @RequestParam("type") final CommunityType communityType,
+            @RequestParam("latitude") final double latitude,
+            @RequestParam("longitude") final double longitude) {
+        try {
+            // Fetch all community groups of the specified type
+            List<CommunityGroup> communities = communityGroupRepository.findByCommunityType(communityType);
+
+            if (communities.isEmpty()) {
+                return new ResponseEntity<>("No community groups were found for type: " + communityType,
+                        HttpStatus.NOT_FOUND);
+            }
+
+            // Calculate the closest community group using Euclidean distance
+            CommunityGroup closestGroup = null;
+            double closestDistance = Double.MAX_VALUE;
+
+            for (CommunityGroup community : communities) {
+                double distance = calculateEuclideanDistance(
+                        latitude, longitude, community.getLatitude(), community.getLongitude());
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestGroup = community;
+                }
+            }
+
+            return new ResponseEntity<>(closestGroup, HttpStatus.OK);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    /**
+     * Helper method to calculate Euclidean distance between two points (latitude1, longitude1) and (latitude2, longitude2).
+     *
+     * @param lat1 Latitude of the first point.
+     * @param lon1 Longitude of the first point.
+     * @param lat2 Latitude of the second point.
+     * @param lon2 Longitude of the second point.
+     * @return The Euclidean distance between the two points.
+     */
+    private double calculateEuclideanDistance(double lat1, double lon1, double lat2, double lon2) {
+        return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+    }
+
   /**
    * Creates a new community group.
    *
@@ -544,6 +599,48 @@ public class RouteController {
       return handleException(e);
     }
   }
+
+    /**
+     * Retrieves the closest resource of a given type based on the user's location.
+     *
+     * @param resourceType The type of the resource requested (SHELTER, FOOD_BANK, CLINIC, RESTROOM, OTHER).
+     * @param latitude     The latitude of the user's location.
+     * @param longitude    The longitude of the user's location.
+     * @return A {@code ResponseEntity} containing the closest resource of the specified type or a message
+     *         if no resources of the specified type exist.
+     */
+    @GetMapping(value = "/getClosestResource", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getClosestResource(
+            @RequestParam("type") final ResourceType resourceType,
+            @RequestParam("latitude") final double latitude,
+            @RequestParam("longitude") final double longitude) {
+        try {
+            // Fetch all resources of the specified type
+            List<Resource> resources = resourceRepository.findByResourceType(resourceType);
+
+            if (resources.isEmpty()) {
+                return new ResponseEntity<>("No resources were found for type: " + resourceType,
+                        HttpStatus.NOT_FOUND);
+            }
+
+            // Calculate the closest resource using Euclidean distance
+            Resource closestResource = null;
+            double closestDistance = Double.MAX_VALUE;
+
+            for (Resource resource : resources) {
+                double distance = calculateEuclideanDistance(
+                        latitude, longitude, resource.getLatitude(), resource.getLongitude());
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestResource = resource;
+                }
+            }
+
+            return new ResponseEntity<>(closestResource, HttpStatus.OK);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
 
   /**
    * Retrieves a resource by its ID.
