@@ -13,6 +13,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.javadb.model.CommunityGroup;
+import com.example.javadb.model.CommunityGroup.CommunityType;
 import com.example.javadb.model.Resource;
+import com.example.javadb.model.Resource.ResourceType;
 import com.example.javadb.model.User;
 import com.example.javadb.model.UserCommunity;
 import com.example.javadb.repository.CommunityGroupRepository;
@@ -35,6 +39,7 @@ import com.example.javadb.repository.UserRepository;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -208,6 +213,47 @@ public class RouteControllerTests {
             .andExpect(content().string("Community Group Not Found"));
     }
 
+    @Test
+    public void testGetCommunityGroupsByType_ReturnsOnlyMentalHealth() throws Exception {
+        CommunityGroup mentalhealth = new CommunityGroup();
+        mentalhealth.setCommunityType(CommunityType.MENTAL_HEALTH);
+        mentalhealth.setCommunityName("Mental Health Group");
+        mentalhealth.setDescription("Mental health support group.");
+        mentalhealth.setLatitude(40);
+        mentalhealth.setLongitude(-75);
+
+        CommunityGroup other = new CommunityGroup();
+        other.setCommunityType(CommunityType.OTHER);
+        other.setCommunityName("Other");
+        other.setDescription("Extra support group.");
+        other.setLatitude(40);
+        other.setLongitude(-74);
+
+        when(communityGroupRepository.findByCommunityType(CommunityType.MENTAL_HEALTH)).thenReturn(Arrays.asList(mentalhealth));
+
+        mockMvc.perform(get("/getCommunityGroupsByType?type=MENTAL_HEALTH")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+
+                    assertTrue(responseContent.contains("\"communityType\":\"MENTAL_HEALTH\""));
+                    assertFalse(responseContent.contains("\"communityType\":\"OTHER\""));
+                });
+    }
+
+    @Test
+    void testGetCommunityGroupByType_NotFound() throws Exception {
+        CommunityType communityType = CommunityType.MENTAL_HEALTH;
+        when(communityGroupRepository.findByCommunityType(communityType)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/getCommunityGroupsByType")
+                        .param("type", communityType.name())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("No community groups were found for type: " + communityType));
+    }
 
     @Test
     public void testGetCommunityGroupByIdWithAttributeCommunityName() throws Exception {
@@ -305,6 +351,48 @@ public class RouteControllerTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("Food Bank")));
+    }
+
+    @Test
+    public void testGetResourcesByType_ReturnsOnlyShelter() throws Exception {
+        Resource shelter = new Resource();
+        shelter.setResourceType(ResourceType.SHELTER);
+        shelter.setResourceName("Local Shelter");
+        shelter.setDescription("A local shelter for the homeless.");
+        shelter.setLatitude(40);
+        shelter.setLongitude(-75);
+
+        Resource foodBank = new Resource();
+        foodBank.setResourceType(ResourceType.FOOD_BANK);
+        foodBank.setResourceName("City Food Bank");
+        foodBank.setDescription("Food bank providing meals.");
+        foodBank.setLatitude(40);
+        foodBank.setLongitude(-74);
+
+        when(resourceRepository.findByResourceType(ResourceType.SHELTER)).thenReturn(Arrays.asList(shelter));
+
+        mockMvc.perform(get("/getResourcesByType?type=SHELTER")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+
+                    assertTrue(responseContent.contains("\"resourceType\":\"SHELTER\""));
+                    assertFalse(responseContent.contains("\"resourceType\":\"FOOD_BANK\""));
+                });
+    }
+
+    @Test
+    void testGetResourcesByType_NotFound() throws Exception {
+        ResourceType resourceType = ResourceType.SHELTER;
+        when(resourceRepository.findByResourceType(resourceType)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/getResourcesByType")
+                        .param("type", resourceType.name())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("No resources were found for type: " + resourceType));
     }
 
     @Test
