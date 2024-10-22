@@ -14,7 +14,7 @@ In order to build and use our service you must install the following:
 2. JDK 17: This project used JDK 17 for development so that is what we recommend you use: https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
 3. IntelliJ IDE: We recommend using IntelliJ but you are free to use any other IDE that you are comfortable with: https://www.jetbrains.com/idea/download/?section=windows
 After you have everything installed, you an clone this repo using <code> git clone https://github.com/preethiprakash1/communitycompass.git </code>
-4. If you wish to run the style checker, you can with <code>mvn checkstyle:check</code> or <code>mvn checkstyle:checkstyle</code> in the project directory if you wish to generate the report.
+4. If you wish to run the style checker, you can with <code>mvn checkstyle:check</code> or <code>mvn checkstyle:check</code> in the project directory if you wish to generate the report.
 5. If you wish to run tests and generate a JaCoCo report, you can with the following commands in the project directory
 ```
 mvn clean test
@@ -206,9 +206,7 @@ This section describes the endpoints that our service provides, along with their
 ## Style Checking Report
 We used the tool "checkstyle" to check the style of our code and generate style checking reports. In particular, we used the maven default sun_checks.xml (taken from https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/sun_checks.xml), with a minor change to allow for more than 7 parameters for method or constructor, since there are a few cases where we have 8. The checkstyle.xml file reflects this. You can use the following command inside the project directory to see the report:
 ```
-mvn checkstyle:checkstyle 
-target/site/checkstyle.html
-open target/site/checkstyle.html
+mvn checkstyle:check
 ```
 You can also see the screenshot below for the most recent Checkstyle Report.
 ![checkstyle](checkstyle.jpeg)
