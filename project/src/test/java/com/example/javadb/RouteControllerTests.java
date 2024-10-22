@@ -65,7 +65,13 @@ public class RouteControllerTests {
 
     private User testUser;
     private CommunityGroup testCommunityGroup;
+    private CommunityGroup testCommunityGroup1;
+    private CommunityGroup testCommunityGroup2;
+    private CommunityGroup testCommunityGroup3;
     private Resource testResource;
+    private Resource testResource1;
+    private Resource testResource2;
+    private Resource testResource3;
 
     @BeforeEach
     public void setUp() {
@@ -93,6 +99,39 @@ public class RouteControllerTests {
         testCommunityGroup.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         testCommunityGroup.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
+        // Test Community Group 1 (closer)
+        testCommunityGroup1 = new CommunityGroup();
+        testCommunityGroup1.setCommunityName("NYC Employment Assistance Group");
+        testCommunityGroup1.setCommunityType(CommunityGroup.CommunityType.EMPLOYMENT_ASSISTANCE);
+        testCommunityGroup1.setLatitude(40.730610); // NYC
+        testCommunityGroup1.setLongitude(-73.935242); // NYC
+        testCommunityGroup1.setCapacity(50);
+        testCommunityGroup1.setDescription("Provides employment assistance");
+        testCommunityGroup1.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        testCommunityGroup1.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Test Community Group 2 (farther)
+        testCommunityGroup2 = new CommunityGroup();
+        testCommunityGroup2.setCommunityName("Mental Health Support");
+        testCommunityGroup2.setCommunityType(CommunityGroup.CommunityType.MENTAL_HEALTH);
+        testCommunityGroup2.setLatitude(40.650002); // Brooklyn, NYC
+        testCommunityGroup2.setLongitude(-73.949997); // Brooklyn, NYC
+        testCommunityGroup2.setCapacity(30);
+        testCommunityGroup2.setDescription("Provides mental health support");
+        testCommunityGroup2.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        testCommunityGroup2.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Test Community Group 3 (farther)
+        testCommunityGroup3 = new CommunityGroup();
+        testCommunityGroup3.setCommunityName("Brooklyn Employment Assistance Group");
+        testCommunityGroup3.setCommunityType(CommunityGroup.CommunityType.EMPLOYMENT_ASSISTANCE);
+        testCommunityGroup3.setLatitude(40.650002); // Brooklyn, NYC
+        testCommunityGroup3.setLongitude(-73.949997); // Brooklyn, NYC
+        testCommunityGroup3.setCapacity(30);
+        testCommunityGroup3.setDescription("Provides mental health support");
+        testCommunityGroup3.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        testCommunityGroup3.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
         // Test Resource
         testResource = new Resource();
         testResource.setResourceName("Food Bank");
@@ -103,6 +142,39 @@ public class RouteControllerTests {
         testResource.setDescription("Provides food assistance");
         testResource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         testResource.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Test Resource 1 (closer)
+        testResource1 = new Resource();
+        testResource1.setResourceName("NYC Local Shelter");
+        testResource1.setResourceType(Resource.ResourceType.SHELTER);
+        testResource1.setLatitude(40.7128); // NYC
+        testResource1.setLongitude(-74.0060); // NYC
+        testResource1.setResourceHours("9 AM - 5 PM");
+        testResource1.setDescription("Provides temporary shelter");
+        testResource1.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        testResource1.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Test Resource 2 (farther)
+        testResource2 = new Resource();
+        testResource2.setResourceName("Community Food Bank");
+        testResource2.setResourceType(Resource.ResourceType.FOOD_BANK);
+        testResource2.setLatitude(40.730610); // Brooklyn, NYC
+        testResource2.setLongitude(-73.935242); // Brooklyn, NYC
+        testResource2.setResourceHours("8 AM - 6 PM");
+        testResource2.setDescription("Provides food to the needy");
+        testResource2.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        testResource2.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Test Resource 3 (farther)
+        testResource3 = new Resource();
+        testResource3.setResourceName("Brooklyn Local Shelter");
+        testResource3.setResourceType(Resource.ResourceType.SHELTER);
+        testResource3.setLatitude(40.730610); // Brooklyn, NYC
+        testResource3.setLongitude(-73.935242); // Brooklyn, NYC
+        testResource3.setResourceHours("8 AM - 6 PM");
+        testResource3.setDescription("Provides temporary shelter");
+        testResource3.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        testResource3.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
     }
 
@@ -190,7 +262,7 @@ public class RouteControllerTests {
         mockMvc.perform(get("/getCommunityGroups")
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().json("[{\"communityName\":\"Local Food Bank\"}]")); // Adjust as necessary for JSON response
+            .andExpect(content().json("[{\"communityName\":\"Local Food Bank\"}]"));
     }
 
     @Test
@@ -297,6 +369,39 @@ public class RouteControllerTests {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Attribute Not Found"));
+    }
+
+    @Test
+    public void testGetClosestCommunityGroup() throws Exception {
+        // Mock the repository to return both community groups
+        List<CommunityGroup> communityGroups = Arrays.asList(testCommunityGroup1, testCommunityGroup2, testCommunityGroup3);
+        when(communityGroupRepository.findByCommunityType(CommunityGroup.CommunityType.EMPLOYMENT_ASSISTANCE))
+            .thenReturn(communityGroups);
+
+        // Perform the request with a latitude and longitude close to testCommunityGroup1
+        mockMvc.perform(get("/getClosestCommunityGroup")
+                .param("type", "EMPLOYMENT_ASSISTANCE")
+                .param("latitude", "40.730610") // User's location (NYC)
+                .param("longitude", "-73.935242") // User's location (NYC)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json("{\"communityName\":\"NYC Employment Assistance Group\"}")); // Adjust to match response
+    }
+
+    @Test
+    public void testGetClosestCommunityGroupWhenNoGroupsFound() throws Exception {
+        // Mock the repository to return an empty list
+        when(communityGroupRepository.findByCommunityType(CommunityGroup.CommunityType.EMPLOYMENT_ASSISTANCE))
+            .thenReturn(Arrays.asList());
+
+        // Perform the request and expect a 404 response
+        mockMvc.perform(get("/getClosestCommunityGroup")
+                .param("type", "EMPLOYMENT_ASSISTANCE")
+                .param("latitude", "40.730610")
+                .param("longitude", "-73.935242")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("No community groups were found for type: EMPLOYMENT_ASSISTANCE"));
     }
 
     @Test
@@ -415,6 +520,39 @@ public class RouteControllerTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Resource Not Found"));
+    }
+
+    @Test
+    public void testGetClosestResource() throws Exception {
+        // Mock the repository to return both resources
+        List<Resource> resources = Arrays.asList(testResource1, testResource2, testResource3);
+        when(resourceRepository.findByResourceType(Resource.ResourceType.SHELTER))
+            .thenReturn(resources);
+
+        // Perform the request with a latitude and longitude close to testResource1
+        mockMvc.perform(get("/getClosestResource")
+                .param("type", "SHELTER")
+                .param("latitude", "40.7128") // User's location (NYC)
+                .param("longitude", "-74.0060") // User's location (NYC)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json("{\"resourceName\":\"NYC Local Shelter\"}"));
+    }
+
+    @Test
+    public void testGetClosestResourceWhenNoResourcesFound() throws Exception {
+        // Mock the repository to return an empty list
+        when(resourceRepository.findByResourceType(Resource.ResourceType.SHELTER))
+            .thenReturn(Arrays.asList());
+
+        // Perform the request and expect a 404 response
+        mockMvc.perform(get("/getClosestResource")
+                .param("type", "SHELTER")
+                .param("latitude", "40.7128")
+                .param("longitude", "-74.0060")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("No resources were found for type: SHELTER"));
     }
 
     @Test
