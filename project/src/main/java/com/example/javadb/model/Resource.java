@@ -234,6 +234,14 @@ public final class Resource {
     if (hours == null) {
       throw new IllegalArgumentException("Resource hours cannot be null");
     }
+
+    String regex = "^(1[0-2]|[1-9])(AM|PM)-(1[0-2]|[1-9])(AM|PM)$";
+    if (!hours.matches(regex)) {
+      throw new IllegalArgumentException("Ensure that resource hours are "
+              + "of the format 'HHAM-HHPM' where HH is in the correct "
+              + "range 1-12.");
+    }
+
     this.resourceHours = hours;
   }
 

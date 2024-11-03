@@ -138,7 +138,7 @@ public class RouteControllerTests {
         testResource.setResourceType(Resource.ResourceType.FOOD_BANK);
         testResource.setLatitude(40.7128);
         testResource.setLongitude(-74.0060);
-        testResource.setResourceHours("9 AM - 5 PM");
+        testResource.setResourceHours("9AM-5PM");
         testResource.setDescription("Provides food assistance");
         testResource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         testResource.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
@@ -149,7 +149,7 @@ public class RouteControllerTests {
         testResource1.setResourceType(Resource.ResourceType.SHELTER);
         testResource1.setLatitude(40.7128); // NYC
         testResource1.setLongitude(-74.0060); // NYC
-        testResource1.setResourceHours("9 AM - 5 PM");
+        testResource1.setResourceHours("9AM-5PM");
         testResource1.setDescription("Provides temporary shelter");
         testResource1.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         testResource1.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
@@ -160,7 +160,7 @@ public class RouteControllerTests {
         testResource2.setResourceType(Resource.ResourceType.FOOD_BANK);
         testResource2.setLatitude(40.730610); // Brooklyn, NYC
         testResource2.setLongitude(-73.935242); // Brooklyn, NYC
-        testResource2.setResourceHours("8 AM - 6 PM");
+        testResource2.setResourceHours("9AM-5PM");
         testResource2.setDescription("Provides food to the needy");
         testResource2.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         testResource2.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
@@ -171,7 +171,7 @@ public class RouteControllerTests {
         testResource3.setResourceType(Resource.ResourceType.SHELTER);
         testResource3.setLatitude(40.730610); // Brooklyn, NYC
         testResource3.setLongitude(-73.935242); // Brooklyn, NYC
-        testResource3.setResourceHours("8 AM - 6 PM");
+        testResource3.setResourceHours("9AM-5PM");
         testResource3.setDescription("Provides temporary shelter");
         testResource3.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         testResource3.setUpdatedAt(new Timestamp(System.currentTimeMillis()));

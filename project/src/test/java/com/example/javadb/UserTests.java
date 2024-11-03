@@ -123,6 +123,18 @@ class UserTests {
   }
 
   @Test
+  void testSetLatitudeOutOfRange() {
+    assertThrows(IllegalArgumentException.class,
+            () -> user.setLatitude(100.0));
+  }
+
+  @Test
+  void testSetLongitudeOutOfRange() {
+    assertThrows(IllegalArgumentException.class,
+            () -> user.setLongitude(-200.0));
+  }
+
+  @Test
   void testToString() {
     String expected = "User{" +
             "userId=0" +

@@ -67,4 +67,24 @@ class ResourceTests {
     assertThrows(IllegalArgumentException.class,
             () -> resource.setResourceHours(null));
   }
+
+  @Test
+  void testSetResourceHoursWithInvalidHours() {
+    assertThrows(IllegalArgumentException.class,
+            () -> resource.setResourceHours("13AM-2PM"));
+  }
+
+  @Test
+  void testSetResourceHoursWithInvalidFormat() {
+    assertThrows(IllegalArgumentException.class,
+            () -> resource.setResourceHours("2PM@4PM"));
+  }
+
+  @Test
+  void testSetResourceHoursWithValidFormat() {
+    String hours = "2PM-4PM";
+    resource.setResourceHours(hours);
+
+    assertEquals(hours, resource.getResourceHours());
+  }
 }

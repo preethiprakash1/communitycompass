@@ -22,6 +22,14 @@ import java.util.List;
 @Table(name = "users")
 public final class User {
 
+  /** Maximum allowed latitude. */
+  private static final double MAX_LATITUDE = 90;
+  /** Minimum allowed latitude. */
+  private static final double MIN_LATITUDE = -90;
+  /** Maximum allowed longitude. */
+  private static final double MAX_LONGITUDE = 180;
+  /** Minimum allowed longitude. */
+  private static final double MIN_LONGITUDE = -180;
   /** Maximum length for name or email fields. */
   private static final int MAX_LENGTH = 100;
 
@@ -223,6 +231,9 @@ public final class User {
    * @param newLatitude the latitude to set
    */
   public void setLatitude(final double newLatitude) {
+    if (newLatitude < MIN_LATITUDE || newLatitude > MAX_LATITUDE) {
+      throw new IllegalArgumentException("Latitude must be between -90 and 90");
+    }
     this.latitude = newLatitude;
   }
 
@@ -241,6 +252,10 @@ public final class User {
    * @param newLongitude the longitude to set
    */
   public void setLongitude(final double newLongitude) {
+    if (newLongitude < MIN_LONGITUDE || newLongitude > MAX_LONGITUDE) {
+      throw new IllegalArgumentException("Longitude "
+              + "must be between -180 and 180");
+    }
     this.longitude = newLongitude;
   }
 
