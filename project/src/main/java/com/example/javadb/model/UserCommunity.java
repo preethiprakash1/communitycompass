@@ -8,6 +8,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Represents the relationship between a User and a CommunityGroup.
  * Corresponds to the "user_community" table.
@@ -21,12 +23,14 @@ public class UserCommunity implements Serializable {
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     /** The community group associated with the user. */
     @Id
     @ManyToOne
     @JoinColumn(name = "community_id", nullable = false)
+    @JsonIgnore
     private CommunityGroup community;
 
     /**
