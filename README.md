@@ -37,6 +37,8 @@ mvn jacoco:report
 open target/site/jacoco/index.html
 ```
 
+Note: As discussed with Professor Kaiser during office hours, internal integration tests were not applicable for this project since there is no shared component across different endpoints. However, ExternalIntegrationTests.java provides several happy-path and invalid integration tests that connect the service layer with the real persistent MySQL database.
+
 ## API Endpoints
 This section describes the endpoints that our service provides, along with their expected inputs and outputs.  It indicates what each endpoint will return upon both success and failure. If the API endpoint structure does not match what you are attempting to send you will receive HTTP 400 NOT FOUND in response.
 
