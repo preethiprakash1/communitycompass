@@ -178,7 +178,7 @@ public class RouteControllerTests {
 
     }
 
-     @Test
+    @Test
     public void testGetUsers() throws Exception {
         List<User> users = Arrays.asList(testUser);
 
@@ -283,6 +283,75 @@ public class RouteControllerTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string("Community Group Not Found"));
+    }
+
+    @Test
+    public void testGetCommunityGroupByIdWithValidAttributeName() throws Exception {
+        when(communityGroupRepository.findById(testCommunityGroup.getCommunityId()))
+            .thenReturn(java.util.Optional.of(testCommunityGroup));
+
+        // Test each valid attribute
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "communityname")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testCommunityGroup.getCommunityName()));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "communitytype")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testCommunityGroup.getCommunityType().toString()));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "latitude")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testCommunityGroup.getLatitude())));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "longitude")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testCommunityGroup.getLongitude())));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "capacity")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testCommunityGroup.getCapacity())));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "description")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testCommunityGroup.getDescription()));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "usercount")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testCommunityGroup.getNumberOfUsers())));
+    }
+
+    @Test
+    public void testGetCommunityGroupByIdWithInvalidAttributeName() throws Exception {
+        when(communityGroupRepository.findById(testCommunityGroup.getCommunityId()))
+            .thenReturn(java.util.Optional.of(testCommunityGroup));
+
+        mockMvc.perform(get("/getCommunityGroup")
+                .param("id", String.valueOf(testCommunityGroup.getCommunityId()))
+                .param("attribute", "invalidAttribute")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Attribute Not Found"));
     }
 
     @Test
@@ -553,6 +622,182 @@ public class RouteControllerTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(content().string("No resources were found for type: SHELTER"));
+    }
+
+    @Test
+    public void testGetResourceByIdWithValidIdAndAttributeName() throws Exception {
+        when(resourceRepository.findById(testResource.getResourceId())).thenReturn(java.util.Optional.of(testResource));
+
+        // Test each attribute in the switch statement
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "resourcename")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testResource.getResourceName()));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "latitude")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testResource.getLatitude())));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "longitude")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testResource.getLongitude())));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "description")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testResource.getDescription()));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "resourcehours")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testResource.getResourceHours()));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "createdat")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "updatedat")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetResourceByIdWithInvalidAttribute() throws Exception {
+        when(resourceRepository.findById(testResource.getResourceId())).thenReturn(java.util.Optional.of(testResource));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .param("attribute", "invalidAttribute")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Attribute Not Found"));
+    }
+
+    @Test
+    public void testGetResourceByIdWithValidIdButNoAttributeName() throws Exception {
+        when(resourceRepository.findById(testResource.getResourceId())).thenReturn(java.util.Optional.of(testResource));
+
+        mockMvc.perform(get("/getResource")
+                .param("id", String.valueOf(testResource.getResourceId()))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json("{\"resourceName\":\"Food Bank\"}")); 
+    }
+
+    @Test
+    public void testGetResourceByIdWithNonExistingId() throws Exception {
+        when(resourceRepository.findById(99)).thenReturn(java.util.Optional.empty());
+
+        mockMvc.perform(get("/getResource")
+                .param("id", "99")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Resource Not Found"));
+    }
+
+    @Test
+    public void testGetUserByIdWithValidIdAndAttributeName() throws Exception {
+        when(userRepository.findById(testUser.getUserId())).thenReturn(java.util.Optional.of(testUser));
+
+        // Test each valid attribute
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "name")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testUser.getName()));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "email")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(testUser.getEmail()));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "age")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testUser.getAge())));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "sex")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string("\"" + testUser.getSex() + "\""));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "latitude")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testUser.getLatitude())));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "longitude")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testUser.getLongitude())));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "communitycount")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(String.valueOf(testUser.getNumberOfCommunities())));
+    }
+
+    @Test
+    public void testGetUserByIdWithValidIdAndNoAttributeName() throws Exception {
+        when(userRepository.findById(testUser.getUserId())).thenReturn(java.util.Optional.of(testUser));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().json("{\"name\":\"" + testUser.getName() + "\"}")); // Adjust to match full JSON
+    }
+
+    @Test
+    public void testGetUserByIdWithNonExistingId() throws Exception {
+        when(userRepository.findById(99)).thenReturn(java.util.Optional.empty());
+
+        mockMvc.perform(get("/getUser")
+                .param("id", "99")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("User Not Found"));
+    }
+
+    @Test
+    public void testGetUserByIdWithInvalidAttribute() throws Exception {
+        when(userRepository.findById(testUser.getUserId())).thenReturn(java.util.Optional.of(testUser));
+
+        mockMvc.perform(get("/getUser")
+                .param("id", String.valueOf(testUser.getUserId()))
+                .param("attribute", "invalidAttribute")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("Attribute Not Found"));
     }
 
     @Test
