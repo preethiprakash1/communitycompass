@@ -1,0 +1,14 @@
+{
+    "type": "service_account",
+    "project_id": "communitycompass-438103",
+    "private_key_id": "9cb90983518ef08abc277eb3ab99d99d88b933ce",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCX+toA3pAj5KA7\nVlZGHXnliYxPeU0nWGzURnjI+i3/t5awjjdARzzYR+6gdUj49wBzywsr7KfdNDn8\n+1+oM12vWAzq3qQ1ggo4EMqhLzWyZI0Y0H44FHssWK2ZNaE2uTR6j3Ia+fs9Ksoe\ntkEKAw+2zDUEfj0FdkMHMkGMr66QF7t7RJnUKsxV0kODhg1yIXBoOzOISSL+vdlX\nJQyTSj6GlXVlZpmDQEoepPChXahPP993iC4K1Rov4HSpUlg9yPWJ94TYDlCrVL5e\nGHSJBczVZHEaeb5lvZuKwGl9AS3iDNmXwqiu/odRtBaXAxXHpjXh+YiiBHWRsjgM\n+1s0nu/dAgMBAAECggEAHiv+KyWEOqf5GoabppxT9pqdySpVA55lrqfV81pdlvKI\n30DAncl2vh5btK3MIKcSxyo0a9I2Ci+D4qI5/Z/C9dxWZitwsLHCGxrUS3ceoy2c\nqGQ95p7ETEvHnQ69VGqkzT8coVfnBZ/w0/ONSnJMpJb6YIu6TBMMIAndYxN+pZrO\nCb8+sDLppUG6ZJVujtGnNHVHL2y0shOxbmvfZfog9Z4dei0Por9dVSBYZwr7vQas\nPPcNX4g5MGAiINLEU/GlneWNSXaSfFmcCY3o/pKLMZT2ChPImnRX3XIVvucQBxlc\nB4MVfDsErWrdxG6xIt5VZWKJFVIy0EqX4OYWgqRamQKBgQDTm9sQrDYrgsIf9Fxk\nesz2ZWOucz1AaRFGlO3ZakUArbTS5DerdKLZTxaObvUa20IFiGxWnl7HKqKuCSr1\nLPD2EzJsbrM4NWJ8KkLmq+6rrz7TT3N5t4TNJJqXH5S18BUSuSXMJz0p+oiIKQhX\n3x6uxoBrKjnq1dD/9Cu2BI7BKQKBgQC33LYIVU/QoQT/04pYZIrnrF2z4zRJl85l\nbsI276KA6bvD0z8T6uSljDJab9ldT4EPiKPcNpAOY3VmZBXBF+rzHIhDZgI+lulh\ny0baTOsZX9+WRCdV0ZDngoG+kjLX/Za7am2tqSP81fJomfnTVtk/OfjpXl075asn\n51ihshXLlQKBgQC/wFy7eAJCXWQBxtIubyTqJig0/dJEWrE/71a1DFpo6f+QlyNn\nJ/MlzkgXW66Z3pOuJdheiXZDLnxqDn6x2z6jDfREU+/tgFq1PyqOksBdLRlWLIns\ngwNBTekUBpcgYuUFqWb535jKQG+WSvB3iATqxY+7DHGdPpH8TkuJzgl6OQKBgGGf\n8Y+vLLgMJ0lnGzgf+plUrlRLuYGx90dobfsZdmGYubgavI1o1YsJS9s1NGcVRePn\nm4nb9tWM/dMmJV7nwjrf1YJj8aEmJDlm4/IZkWNhwqhY+8HXimdCpn13x0NkRNqy\nghYJjzA6sYHU8A/FN4kY0Q+oqTyakCyZ7De/BU+ZAoGBAJYOoHQd4iuMtvWhBn8Y\n6pl9N5FzshOPE5WQcS1zP9hZXVxXu7R8YAzmabOaN0hGNyPa2Rw50Dt9k5f8EnYE\nWBxVGaY+EOacX4Ert92jwMqbonPYfKd5SZlAPfy2cEdIZawPj5OHVXjCSlchCjU4\nvGUb9jF9QDWKIVNEB39RvBO4\n-----END PRIVATE KEY-----\n",
+    "client_email": "my-service-account@communitycompass-438103.iam.gserviceaccount.com",
+    "client_id": "111340688636562366258",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/my-service-account%40communitycompass-438103.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+}
+  

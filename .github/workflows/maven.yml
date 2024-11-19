@@ -28,11 +28,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
         
-    - name: Set up Google Cloud credentials
-      run: echo "${{ secrets.GOOGLE_CREDENTIALS }}" > $HOME/gcloud-key.json
-
+    # Use the credentials from the project folder
     - name: Set GOOGLE_APPLICATION_CREDENTIALS environment variable
-      run: echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json" >> $GITHUB_ENV
+      run: echo "GOOGLE_APPLICATION_CREDENTIALS=project/src/main/resources/communitycompass-438103-9cb90983518e.json" >> $GITHUB_ENV
 
     # Build with Maven
     # - name: Build with Maven
