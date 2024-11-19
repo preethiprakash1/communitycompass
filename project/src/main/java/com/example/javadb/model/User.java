@@ -36,6 +36,7 @@ public final class User {
   /** The unique ID of the user. */
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "user_id")
   private int userId;
 
   /** The name of the user. */
