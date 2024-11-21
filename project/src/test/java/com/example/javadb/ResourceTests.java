@@ -87,4 +87,20 @@ class ResourceTests {
 
     assertEquals(hours, resource.getResourceHours());
   }
+
+  @Test
+  void testToString() {
+    String expected = "Resource{"
+            + "resourceId=" + resource.getResourceId()
+            + ", resourceName='Food Bank'"
+            + ", resourceType=FOOD_BANK"
+            + ", latitude=37.7749"
+            + ", longitude=-122.4194"
+            + ", resourceHours='9 AM - 5 PM'"
+            + ", description='Provides food to the public'"
+            + ", createdAt=" + now
+            + ", updatedAt=" + now
+            + '}';
+    assertEquals(expected, resource.toString());
+  }
 }

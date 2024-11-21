@@ -98,6 +98,11 @@ class UserTests {
   }
 
   @Test
+  void testSetEmailWithNullEmail() {
+    assertThrows(IllegalArgumentException.class, () -> user.setEmail(null));
+  }
+
+  @Test
   void testSetAgeWithNegativeValue() {
     assertThrows(IllegalArgumentException.class, () -> user.setAge(-1));
   }
@@ -123,15 +128,27 @@ class UserTests {
   }
 
   @Test
-  void testSetLatitudeOutOfRange() {
+  void testSetLatitudeAboveRange() {
     assertThrows(IllegalArgumentException.class,
             () -> user.setLatitude(100.0));
   }
 
   @Test
-  void testSetLongitudeOutOfRange() {
+  void testSetLongitudeBelowRange() {
     assertThrows(IllegalArgumentException.class,
             () -> user.setLongitude(-200.0));
+  }
+
+  @Test
+  void testSetLatitudeBelowRange() {
+    assertThrows(IllegalArgumentException.class,
+            () -> user.setLatitude(-100.0));
+  }
+
+  @Test
+  void testSetLongitudeAboeRange() {
+    assertThrows(IllegalArgumentException.class,
+            () -> user.setLongitude(200.0));
   }
 
   @Test
