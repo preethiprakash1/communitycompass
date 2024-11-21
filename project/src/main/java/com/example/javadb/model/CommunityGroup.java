@@ -90,9 +90,11 @@ public final class CommunityGroup {
     }
 
     /**
-     * Default non-args constructor.
+     * Default constructor for CommunityGroup.
      */
-    public CommunityGroup() { }
+    public CommunityGroup() {
+        // Empty constructor
+    }
 
     /**
      * Constructs a new CommunityGroup with the below attributes.

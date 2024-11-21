@@ -10,6 +10,7 @@ class JavadbApplicationTests {
 
     @Test
     void contextLoads() {
+        // Empty test
     }
 
 }

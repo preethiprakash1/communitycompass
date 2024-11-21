@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
+@SuppressWarnings("PMD.UseUtilityClass") // Suppressing PMD warning because
+// this is the entry point of the application
 public class JavadbApplication {
     /**
      * Main method to run the application.
