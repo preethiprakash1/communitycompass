@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,7 +38,6 @@ import com.example.javadb.repository.UserRepository;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -442,7 +439,7 @@ public class RouteControllerTests {
     }
 
     @Test
-    public void testGetCommunityGroupsByType_ReturnsOnlyMentalHealth() throws Exception {
+    public void testGetCommunityGroupsByTypeReturnsOnlyMentalHealth() throws Exception {
         CommunityGroup mentalhealth = new CommunityGroup();
         mentalhealth.setCommunityType(CommunityType.MENTAL_HEALTH);
         mentalhealth.setCommunityName("Mental Health Group");
@@ -472,7 +469,7 @@ public class RouteControllerTests {
     }
 
     @Test
-    void testGetCommunityGroupByType_NotFound() throws Exception {
+    void testGetCommunityGroupByTypeNotFound() throws Exception {
         CommunityType communityType = CommunityType.MENTAL_HEALTH;
         when(communityGroupRepository.findByCommunityType(communityType)).thenReturn(Collections.emptyList());
 
@@ -680,7 +677,7 @@ public class RouteControllerTests {
     }
 
     @Test
-    public void testGetResourcesByType_ReturnsOnlyShelter() throws Exception {
+    public void testGetResourcesByTypeReturnsOnlyShelter() throws Exception {
         Resource shelter = new Resource();
         shelter.setResourceType(ResourceType.SHELTER);
         shelter.setResourceName("Local Shelter");
@@ -710,7 +707,7 @@ public class RouteControllerTests {
     }
 
     @Test
-    void testGetResourcesByType_NotFound() throws Exception {
+    void testGetResourcesByTypeNotFound() throws Exception {
         ResourceType resourceType = ResourceType.SHELTER;
         when(resourceRepository.findByResourceType(resourceType)).thenReturn(Collections.emptyList());
 

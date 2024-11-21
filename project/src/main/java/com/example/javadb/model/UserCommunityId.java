@@ -16,7 +16,7 @@ public class UserCommunityId implements Serializable {
      * Default no-args constructor.
      */
     public UserCommunityId() {
-
+        // Empty constructor
     }
 
     /**

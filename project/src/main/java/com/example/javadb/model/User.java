@@ -92,6 +92,7 @@ public final class User {
    * Default constructor for JPA.
    */
   public User() {
+    // Empty constructor
   }
 
   /**

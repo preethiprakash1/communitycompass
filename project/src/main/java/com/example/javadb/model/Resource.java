@@ -89,7 +89,9 @@ public final class Resource {
   /**
    * No-args constructor for JPA.
    */
-  public Resource() { }
+  public Resource() {
+    // Empty constructor
+  }
 
   /**
    * Constructs a new Resource with the specified attributes.

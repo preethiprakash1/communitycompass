@@ -13,6 +13,7 @@ import com.example.javadb.repository.UserRepository;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -129,7 +130,7 @@ public class RouteController {
       return communityGroupRepository.findById(communityId)
               .map(communityGroup -> {
                 if (attributeName != null) {
-                  switch (attributeName.toLowerCase()) {
+                  switch (attributeName.toLowerCase(Locale.ENGLISH)) {
                     case "communityname":
                       return new ResponseEntity<>(
                               communityGroup.getCommunityName(), HttpStatus.OK);
@@ -294,7 +295,7 @@ public class RouteController {
       try {
         type =
                 CommunityGroup.CommunityType.valueOf(
-                        communityType.toUpperCase());
+                        communityType.toUpperCase(Locale.ENGLISH));
       } catch (IllegalArgumentException e) {
         return new ResponseEntity<>(
                 "Invalid community type provided", HttpStatus.BAD_REQUEST);
@@ -332,13 +333,13 @@ public class RouteController {
     try {
       return communityGroupRepository.findById(communityId)
               .map(group -> {
-                switch (attributeName.toLowerCase()) {
+                switch (attributeName.toLowerCase(Locale.ENGLISH)) {
                   case "communityname":
                     group.setCommunityName(value);
                     break;
                   case "communitytype":
                     group.setCommunityType(CommunityGroup.CommunityType.valueOf(
-                            value.toUpperCase()));
+                            value.toUpperCase(Locale.ENGLISH)));
                     // Adjust if necessary based on your enum
                     break;
                   case "latitude":
@@ -431,7 +432,7 @@ public class RouteController {
       return userRepository.findById(userId)
               .map(user -> {
                 if (attributeName != null) {
-                  switch (attributeName.toLowerCase()) {
+                  switch (attributeName.toLowerCase(Locale.ENGLISH)) {
                     case "name":
                       return new ResponseEntity<>(user.getName(),
                               HttpStatus.OK);
@@ -493,7 +494,8 @@ public class RouteController {
       Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
       User newUser =
-              new User(name, email, age, User.Sex.valueOf(sex.toUpperCase()),
+              new User(name, email, age,
+                      User.Sex.valueOf(sex.toUpperCase(Locale.ENGLISH)),
                       latitude, longitude, currentTimestamp, currentTimestamp);
 
       // Save the new user
@@ -521,7 +523,7 @@ public class RouteController {
     try {
       return userRepository.findById(userId)
               .map(user -> {
-                switch (attributeName.toLowerCase()) {
+                switch (attributeName.toLowerCase(Locale.ENGLISH)) {
                   case "name":
                     user.setName(value);
                     break;
@@ -533,7 +535,7 @@ public class RouteController {
                     break;
                   case "sex":
                     user.setSex(User.Sex.valueOf(
-                            value.toUpperCase())); // Assuming Sex is an enum
+                            value.toUpperCase(Locale.ENGLISH)));
                     break;
                   case "latitude":
                     user.setLatitude(Double.parseDouble(value));
@@ -698,7 +700,7 @@ public class RouteController {
       return resourceRepository.findById(resourceId)
               .map(resource -> {
                 if (attributeName != null) {
-                  switch (attributeName.toLowerCase()) {
+                  switch (attributeName.toLowerCase(Locale.ENGLISH)) {
                     case "resourcename":
                       return new ResponseEntity<>(resource.getResourceName(),
                               HttpStatus.OK);
@@ -764,7 +766,8 @@ public class RouteController {
       // Convert the resourceType string to the ResourceType enum
       Resource.ResourceType type;
       try {
-        type = Resource.ResourceType.valueOf(resourceType.toUpperCase());
+        type = Resource.ResourceType.valueOf(
+                resourceType.toUpperCase(Locale.ENGLISH));
       } catch (IllegalArgumentException e) {
         return new ResponseEntity<>(
                 "Invalid resource type provided", HttpStatus.BAD_REQUEST);
@@ -806,13 +809,13 @@ public class RouteController {
     try {
       return resourceRepository.findById(resourceId)
               .map(resource -> {
-                switch (attributeName.toLowerCase()) {
+                switch (attributeName.toLowerCase(Locale.ENGLISH)) {
                   case "resourcename":
                     resource.setResourceName(value);
                     break;
                   case "resourcetype":
                     resource.setResourceType(Resource.ResourceType.valueOf(
-                            value.toUpperCase()));
+                            value.toUpperCase(Locale.ENGLISH)));
                     // Assuming ResourceType is an enum
                     break;
                   case "latitude":

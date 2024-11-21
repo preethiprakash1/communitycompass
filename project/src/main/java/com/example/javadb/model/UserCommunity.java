@@ -37,6 +37,7 @@ public class UserCommunity implements Serializable {
      * Default no-args constructor.
      */
     public UserCommunity() {
+        // Empty constructor
     }
 
     /**

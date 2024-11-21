@@ -1,9 +1,7 @@
 package com.example.javadb;
 import com.example.javadb.model.CommunityGroup;
-import com.example.javadb.model.CommunityGroup.CommunityType;
 import com.example.javadb.model.Resource;
 import com.example.javadb.model.User;
-import com.example.javadb.model.UserCommunity;
 import com.example.javadb.repository.CommunityGroupRepository;
 import com.example.javadb.repository.ResourceRepository;
 import com.example.javadb.repository.UserCommunityRepository;
@@ -15,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.test.annotation.Rollback;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -30,13 +26,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.json.JSONObject;
 import java.sql.Timestamp;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -70,7 +62,6 @@ public class ExternalIntegrationTests {
   private CommunityGroup testCommunityGroup;
   private CommunityGroup testCommunityGroup1;
   private Resource testResource;
-  private Resource testResource1;
 
   @BeforeEach
   public void setUp() {
@@ -114,16 +105,6 @@ public class ExternalIntegrationTests {
     testResource.setDescription("Provides food assistance");
     testResource.setCreatedAt(new Timestamp(System.currentTimeMillis()));
     testResource.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
-    // Test Resource 1 (closer)
-    testResource1 = new Resource();
-    testResource1.setResourceName("NYC Local Shelter");
-    testResource1.setResourceType(Resource.ResourceType.SHELTER);
-    testResource1.setLatitude(40.7128); // NYC
-    testResource1.setLongitude(-74.0060); // NYC
-    testResource1.setResourceHours("9AM-5PM");
-    testResource1.setDescription("Provides temporary shelter");
-    testResource1.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-    testResource1.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
   }
 
   /**
@@ -179,7 +160,7 @@ public class ExternalIntegrationTests {
    */
   @Transactional
   @Test
-  void testUpdateUser_InvalidAttribute() throws Exception {
+  void testUpdateUserInvalidAttribute() throws Exception {
     User savedUser = userRepository.save(testUser);
     mockMvc.perform(get("/getUser?id=" + savedUser.getUserId())
                     .accept(MediaType.APPLICATION_JSON))
@@ -223,7 +204,7 @@ public class ExternalIntegrationTests {
    */
   @Transactional
   @Test
-  void testGetCommunityGroupByType_InvalidType() throws Exception {
+  void testGetCommunityGroupByTypeInvalidType() throws Exception {
     mockMvc.perform(get("/getCommunityGroupsByType")
                     .param("type", "ABC")
                     .accept(MediaType.APPLICATION_JSON))
@@ -265,8 +246,7 @@ public class ExternalIntegrationTests {
   @Transactional
   @Test
   void getResourceByType() throws Exception {
-    Resource savedResource = resourceRepository.save(testResource);
-    Resource savedResource1 = resourceRepository.save(testResource1);
+    resourceRepository.save(testResource);
     mockMvc.perform(get("/getResourcesByType?type=FOOD_BANK")
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -284,7 +264,7 @@ public class ExternalIntegrationTests {
    */
   @Transactional
   @Test
-  void getResourceByType_InvalidType() throws Exception {
+  void getResourceByTypeInvalidType() throws Exception {
     mockMvc.perform(get("/getResourcesByType")
                     .param("type", "XYZ")
                     .accept(MediaType.APPLICATION_JSON))
@@ -327,7 +307,7 @@ public class ExternalIntegrationTests {
    */
   @Transactional
   @Test
-  void deleteResource_invalidId() throws Exception {
+  void deleteResourceInvalidId() throws Exception {
     mockMvc.perform(delete("/deleteResource")
                     .param("id", "-5"))
             .andExpect(status().isNotFound())
