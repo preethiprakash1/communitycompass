@@ -27,14 +27,20 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-        
-    # Use the credentials from the project folder
-    - name: Set GOOGLE_APPLICATION_CREDENTIALS environment variable
-      run: echo "GOOGLE_APPLICATION_CREDENTIALS=project/src/main/resources/communitycompass-438103-9cb90983518e.json" >> $GITHUB_ENV
 
+    - name: Generate Google Application Credentials
+      id: create-json
+      uses: jsdaniell/create-json@v1
+      with:
+        name: "credentials.json"
+        json: "${{ secrets.GCLOUD_CREDS }}"
+
+      - name: Use Google Application Credentials
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
+    
     # Build with Maven
-    # - name: Build with Maven
-    #   run: mvn -B package --file project/pom.xml
+    - name: Build with Maven
+      run: mvn -B package --file project/pom.xml
 
     # Run Tests with Maven
     - name: Run Tests with Maven
