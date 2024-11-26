@@ -261,9 +261,19 @@ You can also see the screenshot below for the most recent JaCoCo Report.
 We used PMD to perform static analysis on our codebase, see below for the most recent output.
 ![pmd](pmd.png)
 
+## Continuous Integration Report
+This repository using GitHub Actions to perform continous integration, to view the latest results go to the following link: https://github.com/preethiprakash1/communitycompass/blob/main/.github/workflows/maven.yml
+
+Click on the latest job on the top under "X workflow runs" then Click 'Build Java Project', 'Run Unit, API, & Integration Tests', or 'Generate PMD, Jacoco, and Checkstyle reports' under jobs finally click the drop down next to all the action items to read the logs made during each of their executions.
+
+For convenience, the most recent automatic CI Report (pmd, checkstyle, and jacoco) has been created and is available for view in the 'reports' directory under the appropriately named file.
+
 ## Tools Used
 This section includes notes on tools and technologies used in building this service.
 - Maven Package Manager
+- GitHub Actions CI
+  - This is enabled via the "Actions" tab on GitHub.
+  - Currently, this runs a Maven build to make sure the code builds on the main branch. It also runs unit, API, and integration tests. The CI also generates a folder called 'reports' that contain the most up-to-date html file-type pmd, checkstyle, and jacoco reports.
 - Checkstyle
   - We utilize Checkstyle for code quality reporting.
 - JUnit
@@ -271,5 +281,5 @@ This section includes notes on tools and technologies used in building this serv
 - JaCoCo
   - JaCoCo is used to generate code coverage reports.
 - Postman and Curl
-  - Postman and curl are used to test the functionality of my APIs.
+  - Postman and curl are used to test the functionality of our APIs.
 
