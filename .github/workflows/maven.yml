@@ -84,6 +84,6 @@ jobs:
 
       - name: Copy Reports to Repository
         run: |
-          cat project/target/site/checkstyle.html
+          cat project/target/checkstyle-result.xml
           cat project/target/site/jacoco/index.html
-          cat project/target/pmd.xml
+          cat project/target/site/pmd.html
