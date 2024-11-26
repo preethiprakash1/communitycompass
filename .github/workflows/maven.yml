@@ -72,7 +72,7 @@ jobs:
 
       - name: Run Checkstyle
         run: mvn checkstyle:checkstyle -f ../pom.xml
-        working-directory: communitycompass/projects
+        working-directory: projects
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v3
         with:
@@ -81,6 +81,7 @@ jobs:
       
       - name: Run Static Analysis (PMD)
         run: mvn pmd:check
+        working-directory: projects
       - name: Upload PMD Report
         uses: actions/upload-artifact@v3
         with:
@@ -89,6 +90,7 @@ jobs:
 
       - name: Run Branch Coverage with Jacoco
         run: mvn jacoco:report
+        working-directory: projects
       - name: Upload Jacoco Report
         uses: actions/upload-artifact@v3
         with:
