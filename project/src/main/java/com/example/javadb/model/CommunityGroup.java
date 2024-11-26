@@ -18,6 +18,7 @@ import java.util.List;
  * Represents a community group in the system.
  * A community group can have multiple users.
  */
+@SuppressWarnings("checkstyle:parameternumber")
 @Entity
 @Table(name = "community_groups")
 public final class CommunityGroup {

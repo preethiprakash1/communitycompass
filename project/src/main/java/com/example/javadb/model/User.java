@@ -18,6 +18,7 @@ import java.util.List;
  * Represents a user entity in the system.
  * A user can have multiple community memberships.
  */
+@SuppressWarnings("checkstyle:ParameterNumber")
 @Entity
 @Table(name = "users")
 public final class User {

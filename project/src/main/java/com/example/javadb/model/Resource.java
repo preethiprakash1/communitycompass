@@ -105,6 +105,7 @@ public final class Resource {
    * @param created the created timestamp
    * @param updated the timestamp of when the resource was last updated
    */
+  @SuppressWarnings("checkstyle:ParameterNumber")
   public Resource(final String name, final ResourceType type, final double lat,
                   final double lon, final String hours, final String desc,
                   final Timestamp created, final Timestamp updated) {
