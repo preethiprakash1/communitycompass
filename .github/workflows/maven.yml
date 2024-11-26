@@ -69,6 +69,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCLOUD_CREDS }}'
+
+      - name: Run Tests with Maven
+        run: mvn clean test --file project/pom.xml
 
       - name: Run Checkstyle
         run: mvn checkstyle:checkstyle
