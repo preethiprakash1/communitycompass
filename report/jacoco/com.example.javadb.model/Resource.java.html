@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Resource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javadb</a> &gt; <a href="index.source.html" class="el_package">com.example.javadb.model</a> &gt; <span class="el_source">Resource.java</span></div><h1>Resource.java</h1><pre class="source lang-java linenums">package com.example.javadb.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+import java.sql.Timestamp;
+
+/**
+ * Represents a resource entity in the system,
+ * such as shelters, clinics, or food banks.
+ */
+@Entity
+@Table(name = &quot;resources&quot;)
+public final class Resource {
+
+  /** Maximum allowed latitude. */
+  private static final double MAX_LATITUDE = 90;
+  /** Minimum allowed latitude. */
+  private static final double MIN_LATITUDE = -90;
+  /** Maximum allowed longitude. */
+  private static final double MAX_LONGITUDE = 180;
+  /** Minimum allowed longitude. */
+  private static final double MIN_LONGITUDE = -180;
+  /** Defining max length of the resource name. */
+  private static final int RESOURCE_NAME_MAX_LENGTH = 100;
+  /** Defining max length of the resource hours. */
+  private static final int RESOURCE_HOURS_MAX_LENGTH = 50;
+
+  /** The unique ID of the resource. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = &quot;resource_id&quot;)
+  private int resourceId;
+
+  /** The resource name. */
+  @Column(name = &quot;resource_name&quot;, nullable = false,
+          length = RESOURCE_NAME_MAX_LENGTH)
+  private String resourceName;
+
+  /** The resource type. */
+  @Enumerated(EnumType.STRING)
+  @Column(name = &quot;resource_type&quot;, nullable = false)
+  private ResourceType resourceType;
+
+  /** Location latitude. */
+  @Column(name = &quot;latitude&quot;)
+  private double latitude;
+
+  /** Location longitude. */
+  @Column(name = &quot;longitude&quot;)
+  private double longitude;
+
+  /** The open hours of the resource. */
+  @Column(name = &quot;resource_hours&quot;, length = RESOURCE_HOURS_MAX_LENGTH)
+  private String resourceHours;
+
+  /** Description of the resource. */
+  @Column(name = &quot;description&quot;, columnDefinition = &quot;TEXT&quot;)
+  private String description;
+
+  /** Timestamp of when the resource was created. */
+  @Column(name = &quot;created_at&quot;, nullable = false, updatable = false)
+  private Timestamp createdAt;
+
+  /** Timestamp of when the resource was last updated. */
+  @Column(name = &quot;updated_at&quot;, nullable = false)
+  private Timestamp updatedAt;
+
+  /** Enums of the resource types. */
+<span class="fc" id="L76">  public enum ResourceType {</span>
+    /** Shelter type. */
+<span class="fc" id="L78">    SHELTER,</span>
+    /** Food bank type. */
+<span class="fc" id="L80">    FOOD_BANK,</span>
+    /** Clinic type. */
+<span class="fc" id="L82">    CLINIC,</span>
+    /** Restroom type. */
+<span class="fc" id="L84">    RESTROOM,</span>
+    /** Other. */
+<span class="fc" id="L86">    OTHER</span>
+  }
+
+  /**
+   * No-args constructor for JPA.
+   */
+<span class="fc" id="L92">  public Resource() {</span>
+    // Empty constructor
+<span class="fc" id="L94">  }</span>
+
+  /**
+   * Constructs a new Resource with the specified attributes.
+   *
+   * @param name the name of the resource
+   * @param type the type of the resource
+   * @param lat the latitude of the resource
+   * @param lon the longitude of the resource
+   * @param hours the open hours of the resource
+   * @param desc a description of the resource
+   * @param created the created timestamp
+   * @param updated the timestamp of when the resource was last updated
+   */
+  public Resource(final String name, final ResourceType type, final double lat,
+                  final double lon, final String hours, final String desc,
+<span class="fc" id="L110">                  final Timestamp created, final Timestamp updated) {</span>
+<span class="fc" id="L111">    this.resourceName = name;</span>
+<span class="fc" id="L112">    this.resourceType = type;</span>
+<span class="fc" id="L113">    this.latitude = lat;</span>
+<span class="fc" id="L114">    this.longitude = lon;</span>
+<span class="fc" id="L115">    this.resourceHours = hours;</span>
+<span class="fc" id="L116">    this.description = desc;</span>
+<span class="fc" id="L117">    this.createdAt = created;</span>
+<span class="fc" id="L118">    this.updatedAt = updated;</span>
+<span class="fc" id="L119">  }</span>
+
+  /**
+   * Gets the resource ID.
+   *
+   * @return the resource ID
+   */
+  public int getResourceId() {
+<span class="fc" id="L127">    return resourceId;</span>
+  }
+
+  /**
+   * Gets the resource name.
+   *
+   * @return the resource name
+   */
+  public String getResourceName() {
+<span class="fc" id="L136">    return resourceName;</span>
+  }
+
+  /**
+   * Sets the resource name.
+   *
+   * @param name the name to set
+   * @throws IllegalArgumentException if the name is null or empty
+   */
+  public void setResourceName(final String name) {
+<span class="fc bfc" id="L146" title="All 4 branches covered.">    if (name == null || name.trim().isEmpty()) {</span>
+<span class="fc" id="L147">      throw new IllegalArgumentException(&quot;Resource name &quot;</span>
+              + &quot;cannot be null or empty&quot;);
+    }
+<span class="fc" id="L150">    this.resourceName = name;</span>
+<span class="fc" id="L151">  }</span>
+
+  /**
+   * Gets the type of resource.
+   *
+   * @return the type of resource
+   */
+  public ResourceType getResourceType() {
+<span class="fc" id="L159">    return resourceType;</span>
+  }
+
+  /**
+   * Sets the resource type.
+   *
+   * @param type the type to set
+   * @throws IllegalArgumentException if the type is null
+   */
+  public void setResourceType(final ResourceType type) {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">    if (type == null) {</span>
+<span class="fc" id="L170">      throw new IllegalArgumentException(&quot;Resource type cannot be null&quot;);</span>
+    }
+<span class="fc" id="L172">    this.resourceType = type;</span>
+<span class="fc" id="L173">  }</span>
+
+  /**
+   * Gets the latitude of the resource.
+   *
+   * @return the latitude
+   */
+  public double getLatitude() {
+<span class="fc" id="L181">    return latitude;</span>
+  }
+
+  /**
+   * Sets the latitude of the resource.
+   *
+   * @param lat the latitude to set
+   * @throws IllegalArgumentException if the latitude is out of range
+   */
+  public void setLatitude(final double lat) {
+<span class="pc bpc" id="L191" title="1 of 4 branches missed.">    if (lat &lt; MIN_LATITUDE || lat &gt; MAX_LATITUDE) {</span>
+<span class="fc" id="L192">      throw new IllegalArgumentException(&quot;Latitude must be between -90 and 90&quot;);</span>
+    }
+<span class="fc" id="L194">    this.latitude = lat;</span>
+<span class="fc" id="L195">  }</span>
+
+  /**
+   * Gets the longitude of the resource.
+   *
+   * @return the longitude
+   */
+  public double getLongitude() {
+<span class="fc" id="L203">    return longitude;</span>
+  }
+
+  /**
+   * Sets the longitude of the resource.
+   *
+   * @param lon the longitude to set
+   * @throws IllegalArgumentException if the longitude is out of range
+   */
+  public void setLongitude(final double lon) {
+<span class="pc bpc" id="L213" title="1 of 4 branches missed.">    if (lon &lt; MIN_LONGITUDE || lon &gt; MAX_LONGITUDE) {</span>
+<span class="fc" id="L214">      throw new IllegalArgumentException(&quot;Longitude &quot;</span>
+              + &quot;must be between -180 and 180&quot;);
+    }
+<span class="fc" id="L217">    this.longitude = lon;</span>
+<span class="fc" id="L218">  }</span>
+
+  /**
+   * Gets the resource hours.
+   *
+   * @return the resource hours
+   */
+  public String getResourceHours() {
+<span class="fc" id="L226">    return resourceHours;</span>
+  }
+
+  /**
+   * Sets the resource hours.
+   *
+   * @param hours the hours to set
+   * @throws IllegalArgumentException if null
+   */
+  public void setResourceHours(final String hours) {
+<span class="fc bfc" id="L236" title="All 2 branches covered.">    if (hours == null) {</span>
+<span class="fc" id="L237">      throw new IllegalArgumentException(&quot;Resource hours cannot be null&quot;);</span>
+    }
+
+<span class="fc" id="L240">    String regex = &quot;^(1[0-2]|[1-9])(AM|PM)-(1[0-2]|[1-9])(AM|PM)$&quot;;</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">    if (!hours.matches(regex)) {</span>
+<span class="fc" id="L242">      throw new IllegalArgumentException(&quot;Ensure that resource hours are &quot;</span>
+              + &quot;of the format 'HHAM-HHPM' where HH is in the correct &quot;
+              + &quot;range 1-12.&quot;);
+    }
+
+<span class="fc" id="L247">    this.resourceHours = hours;</span>
+<span class="fc" id="L248">  }</span>
+
+  /**
+   * Gets the resource description.
+   *
+   * @return the description
+   */
+  public String getDescription() {
+<span class="fc" id="L256">    return description;</span>
+  }
+
+  /**
+   * Sets the resource description.
+   *
+   * @param desc the description to set
+   */
+  public void setDescription(final String desc) {
+<span class="fc" id="L265">    this.description = desc;</span>
+<span class="fc" id="L266">  }</span>
+
+  /**
+   * Gets the creation timestamp.
+   *
+   * @return the timestamp
+   */
+  public Timestamp getCreatedAt() {
+<span class="fc" id="L274">    return createdAt;</span>
+  }
+
+  /**
+   * Sets the creation timestamp.
+   *
+   * @param created the timestamp
+   */
+  public void setCreatedAt(final Timestamp created) {
+<span class="fc" id="L283">    this.createdAt = created;</span>
+<span class="fc" id="L284">  }</span>
+
+  /**
+   * Gets the last updated timestamp.
+   *
+   * @return the timestamp
+   */
+  public Timestamp getUpdatedAt() {
+<span class="fc" id="L292">    return updatedAt;</span>
+  }
+
+  /**
+   * Sets the last updated timestamp.
+   *
+   * @param updated the timestamp
+   */
+  public void setUpdatedAt(final Timestamp updated) {
+<span class="fc" id="L301">    this.updatedAt = updated;</span>
+<span class="fc" id="L302">  }</span>
+
+  @Override
+  public String toString() {
+<span class="fc" id="L306">    return &quot;Resource{&quot;</span>
+            + &quot;resourceId=&quot; + resourceId
+            + &quot;, resourceName='&quot; + resourceName + '\''
+            + &quot;, resourceType=&quot; + resourceType
+            + &quot;, latitude=&quot; + latitude
+            + &quot;, longitude=&quot; + longitude
+            + &quot;, resourceHours='&quot; + resourceHours + '\''
+            + &quot;, description='&quot; + description + '\''
+            + &quot;, createdAt=&quot; + createdAt
+            + &quot;, updatedAt=&quot; + updatedAt
+            + '}';
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

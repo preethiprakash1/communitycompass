@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RouteController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">javadb</a> &gt; <a href="index.source.html" class="el_package">com.example.javadb.controller</a> &gt; <span class="el_source">RouteController.java</span></div><h1>RouteController.java</h1><pre class="source lang-java linenums">package com.example.javadb.controller;
+
+import com.example.javadb.model.CommunityGroup;
+import com.example.javadb.model.CommunityGroup.CommunityType;
+import com.example.javadb.model.Resource;
+import com.example.javadb.model.Resource.ResourceType;
+import com.example.javadb.model.User;
+import com.example.javadb.model.UserCommunity;
+import com.example.javadb.repository.CommunityGroupRepository;
+import com.example.javadb.repository.ResourceRepository;
+import com.example.javadb.repository.UserCommunityRepository;
+import com.example.javadb.repository.UserRepository;
+
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * This class contains all the API routes for the system.
+ */
+@RestController
+public class RouteController {
+  /**
+   * Repository for user-related operations.
+   */
+  private final UserRepository userRepository;
+
+  /**
+   * Repository for community group-related operations.
+   */
+  private final CommunityGroupRepository communityGroupRepository;
+
+  /**
+   * Repository for resource-related operations.
+   */
+  private final ResourceRepository resourceRepository;
+
+  /**
+   * Repository for user-community group associations.
+   */
+  private final UserCommunityRepository userCommunityRepository;
+
+  /**
+   * Constructor for RouteController.
+   *
+   * @param inCommunityGroupRepository The repository for
+   *                                   community group-related operations.
+   * @param inUserRepository           The repository
+   *                                   for user-related operations.
+   * @param inResourceRepository       The repository
+   *                                   for resource-related operations.
+   * @param inUserCommunityRepository  The repository
+   *                                   for user-community associations.
+   */
+
+  @Autowired
+  public RouteController(
+          final CommunityGroupRepository inCommunityGroupRepository,
+          final UserRepository inUserRepository,
+          final ResourceRepository inResourceRepository,
+<span class="fc" id="L72">          final UserCommunityRepository inUserCommunityRepository) {</span>
+<span class="fc" id="L73">    this.communityGroupRepository = inCommunityGroupRepository;</span>
+<span class="fc" id="L74">    this.userRepository = inUserRepository;</span>
+<span class="fc" id="L75">    this.resourceRepository = inResourceRepository;</span>
+<span class="fc" id="L76">    this.userCommunityRepository = inUserCommunityRepository;</span>
+<span class="fc" id="L77">  }</span>
+
+  /**
+   * Redirects to the homepage.
+   *
+   * @return A String containing a welcome message.
+   */
+  @GetMapping({&quot;/&quot;, &quot;/index&quot;, &quot;/home&quot;, &quot;/welcome&quot;})
+  public String welcome() {
+<span class="nc" id="L86">    return &quot;Hi, welcome to Community Compass&quot;;</span>
+  }
+
+  // Community Groups
+
+  /**
+   * Retrieves all community groups.
+   *
+   * @return A {@code ResponseEntity} containing the list of community groups or
+   *         a message if none are found.
+   */
+  @GetMapping(value = &quot;/getCommunityGroups&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  getCommunityGroups() {
+    try {
+<span class="fc" id="L102">      List&lt;CommunityGroup&gt; items = communityGroupRepository.findAll();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">      if (items.isEmpty()) {</span>
+<span class="nc" id="L104">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;No Community Groups Found&quot;, HttpStatus.NOT_FOUND);
+      }
+<span class="fc" id="L107">      return new ResponseEntity&lt;&gt;(items, HttpStatus.OK);</span>
+<span class="nc" id="L108">    } catch (Exception e) {</span>
+<span class="nc" id="L109">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Retrieves a community group by its ID.
+   *
+   * @param communityId The ID of the community group.
+   * @param attributeName the attributeName
+   * @return A {@code ResponseEntity} containing the community group or a
+   *         message if not found.
+   */
+  @GetMapping(
+          value = &quot;/getCommunityGroup&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  getCommunityGroupById(@RequestParam(&quot;id&quot;) final int communityId,
+                        @RequestParam(
+                                value = &quot;attribute&quot;, required = false)
+                        final String attributeName) {
+    try {
+<span class="fc" id="L130">      return communityGroupRepository.findById(communityId)</span>
+<span class="fc" id="L131">              .map(communityGroup -&gt; {</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                if (attributeName != null) {</span>
+<span class="fc bfc" id="L133" title="All 8 branches covered.">                  switch (attributeName.toLowerCase(Locale.ENGLISH)) {</span>
+                    case &quot;communityname&quot;:
+<span class="fc" id="L135">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L136">                              communityGroup.getCommunityName(), HttpStatus.OK);</span>
+                    case &quot;communitytype&quot;:
+<span class="fc" id="L138">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L139">                              communityGroup.getCommunityType().toString(),</span>
+                              HttpStatus.OK);
+                    case &quot;latitude&quot;:
+<span class="fc" id="L142">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L143">                              communityGroup.getLatitude(), HttpStatus.OK);</span>
+                    case &quot;longitude&quot;:
+<span class="fc" id="L145">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L146">                              communityGroup.getLongitude(), HttpStatus.OK);</span>
+                    case &quot;capacity&quot;:
+<span class="fc" id="L148">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L149">                              communityGroup.getCapacity(), HttpStatus.OK);</span>
+                    case &quot;description&quot;:
+<span class="fc" id="L151">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L152">                              communityGroup.getDescription(), HttpStatus.OK);</span>
+                    case &quot;usercount&quot;:
+<span class="fc" id="L154">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L155">                              communityGroup.getNumberOfUsers(), HttpStatus.OK);</span>
+                    default:
+<span class="fc" id="L157">                      return new ResponseEntity&lt;&gt;(</span>
+                              &quot;Attribute Not Found&quot;, HttpStatus.NOT_FOUND);
+                  }
+                }
+                // If no attribute is specified,
+                // return the entire community group
+<span class="fc" id="L163">                return new ResponseEntity&lt;&gt;(communityGroup, HttpStatus.OK);</span>
+              })
+<span class="fc" id="L165">              .orElse(new ResponseEntity&lt;&gt;(</span>
+                      &quot;Community Group Not Found&quot;, HttpStatus.NOT_FOUND));
+<span class="nc" id="L167">    } catch (Exception e) {</span>
+<span class="nc" id="L168">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Retrieves community groups of a given type.
+   *
+   * @param communityType The type of the community group requested
+   *             (MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER).
+   * @return A {@code ResponseEntity} containing the list of community
+   *             groups of the specified type
+   * or a message if no community groups of the specified type exist.
+   */
+  @GetMapping(value = &quot;/getCommunityGroupsByType&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt; getCommunityGroupsByType(
+          @RequestParam(&quot;type&quot;) final CommunityType communityType) {
+    try {
+<span class="fc" id="L186">      List&lt;CommunityGroup&gt; communities =</span>
+<span class="fc" id="L187">              communityGroupRepository.findByCommunityType(communityType);</span>
+
+<span class="fc bfc" id="L189" title="All 2 branches covered.">      if (communities.isEmpty()) {</span>
+<span class="fc" id="L190">        return new ResponseEntity&lt;&gt;(&quot;No community groups were found for type: &quot;</span>
+                + communityType, HttpStatus.NOT_FOUND);
+      }
+
+<span class="fc" id="L194">      return new ResponseEntity&lt;&gt;(communities, HttpStatus.OK);</span>
+<span class="nc" id="L195">    } catch (Exception e) {</span>
+<span class="nc" id="L196">      return handleException(e);</span>
+    }
+  }
+
+    /**
+     * Retrieves the closest community group of a given type based
+     * on the user's location.
+     *
+     * @param communityType The type of the community group requested
+     *                      (MENTAL_HEALTH, EMPLOYMENT_ASSISTANCE, OTHER).
+     * @param latitude      The latitude of the user's location.
+     * @param longitude     The longitude of the user's location.
+     * @return A {@code ResponseEntity} containing the closest community group
+     *         of the specified type or a message if no community groups of
+     *         the specified type exist.
+    */
+    @GetMapping(value = &quot;/getClosestCommunityGroup&quot;,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity&lt;?&gt; getClosestCommunityGroup(
+            @RequestParam(&quot;type&quot;) final CommunityType communityType,
+            @RequestParam(&quot;latitude&quot;) final double latitude,
+            @RequestParam(&quot;longitude&quot;) final double longitude) {
+        try {
+            // Fetch all community groups of the specified type
+<span class="fc" id="L221">            List&lt;CommunityGroup&gt; communities =</span>
+<span class="fc" id="L222">                communityGroupRepository.findByCommunityType(communityType);</span>
+
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            if (communities.isEmpty()) {</span>
+<span class="fc" id="L225">                return new ResponseEntity&lt;&gt;(</span>
+                    &quot;No community groups were found for type: &quot;
+                    + communityType,
+                    HttpStatus.NOT_FOUND);
+            }
+
+            // Calculate the closest community group using Euclidean distance
+<span class="fc" id="L232">            CommunityGroup closestGroup = null;</span>
+<span class="fc" id="L233">            double closestDistance = Double.MAX_VALUE;</span>
+
+<span class="fc bfc" id="L235" title="All 2 branches covered.">            for (CommunityGroup community : communities) {</span>
+<span class="fc" id="L236">                double distance = calculateEuclideanDistance(</span>
+<span class="fc" id="L237">                        latitude, longitude, community.getLatitude(),</span>
+<span class="fc" id="L238">                        community.getLongitude()</span>
+                );
+<span class="fc bfc" id="L240" title="All 2 branches covered.">                if (distance &lt; closestDistance) {</span>
+<span class="fc" id="L241">                    closestDistance = distance;</span>
+<span class="fc" id="L242">                    closestGroup = community;</span>
+                }
+<span class="fc" id="L244">            }</span>
+
+<span class="fc" id="L246">            return new ResponseEntity&lt;&gt;(closestGroup, HttpStatus.OK);</span>
+<span class="nc" id="L247">        } catch (Exception e) {</span>
+<span class="nc" id="L248">            return handleException(e);</span>
+        }
+    }
+
+    /**
+     * Helper method to calculate Euclidean distance between two points
+     * (latitude1, longitude1) and (latitude2, longitude2).
+     *
+     * @param lat1 Latitude of the first point.
+     * @param lon1 Longitude of the first point.
+     * @param lat2 Latitude of the second point.
+     * @param lon2 Longitude of the second point.
+     * @return The Euclidean distance between the two points.
+    */
+    private double calculateEuclideanDistance(
+        final double lat1,
+        final double lon1,
+        final double lat2,
+        final double lon2
+    ) {
+<span class="fc" id="L268">        return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));</span>
+    }
+
+  /**
+   * Creates a new community group.
+   *
+   * @param communityName The name of the community group.
+   * @param communityType The type of the community group.
+   * @param latitude      The latitude of the community group location.
+   * @param longitude     The longitude of the community group location.
+   * @param capacity      The capacity of the community group.
+   * @param description   A description of the community group.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PostMapping(value = &quot;/createCommunityGroup&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  createCommunityGroup(
+          @RequestParam(&quot;communityName&quot;) final String communityName,
+          @RequestParam(&quot;communityType&quot;) final String communityType,
+          @RequestParam(&quot;latitude&quot;) final double latitude,
+          @RequestParam(&quot;longitude&quot;) final double longitude,
+          @RequestParam(&quot;capacity&quot;) final int capacity,
+          @RequestParam(&quot;description&quot;) final String description) {
+    try {
+      // Convert the communityType string to the CommunityType enum
+      CommunityGroup.CommunityType type;
+      try {
+<span class="fc" id="L296">        type =</span>
+<span class="fc" id="L297">                CommunityGroup.CommunityType.valueOf(</span>
+<span class="fc" id="L298">                        communityType.toUpperCase(Locale.ENGLISH));</span>
+<span class="nc" id="L299">      } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L300">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Invalid community type provided&quot;, HttpStatus.BAD_REQUEST);
+<span class="fc" id="L302">      }</span>
+
+<span class="fc" id="L304">      Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());</span>
+
+<span class="fc" id="L306">      CommunityGroup newGroup =</span>
+              new CommunityGroup(communityName, type,
+                      latitude, longitude, capacity,
+                      description, currentTimestamp, currentTimestamp);
+
+      // Save the new CommunityGroup
+<span class="fc" id="L312">      CommunityGroup savedGroup = communityGroupRepository.save(newGroup);</span>
+<span class="fc" id="L313">      return new ResponseEntity&lt;&gt;(savedGroup, HttpStatus.CREATED);</span>
+<span class="nc" id="L314">    } catch (Exception e) {</span>
+<span class="nc" id="L315">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Updates a specific attribute of a community group by its ID.
+   *
+   * @param communityId   The ID of the community group.
+   * @param attributeName The name of the attribute to update.
+   * @param value         The new value for the specified attribute.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PatchMapping(value = &quot;/updateCommunityGroup&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  updateCommunityGroup(@RequestParam(&quot;id&quot;) final int communityId,
+                       @RequestParam(&quot;attribute&quot;) final String attributeName,
+                       @RequestParam(&quot;value&quot;) final String value) {
+    try {
+<span class="fc" id="L334">      return communityGroupRepository.findById(communityId)</span>
+<span class="fc" id="L335">              .map(group -&gt; {</span>
+<span class="pc bpc" id="L336" title="1 of 7 branches missed.">                switch (attributeName.toLowerCase(Locale.ENGLISH)) {</span>
+                  case &quot;communityname&quot;:
+<span class="fc" id="L338">                    group.setCommunityName(value);</span>
+<span class="fc" id="L339">                    break;</span>
+                  case &quot;communitytype&quot;:
+<span class="fc" id="L341">                    group.setCommunityType(CommunityGroup.CommunityType.valueOf(</span>
+<span class="fc" id="L342">                            value.toUpperCase(Locale.ENGLISH)));</span>
+                    // Adjust if necessary based on your enum
+<span class="fc" id="L344">                    break;</span>
+                  case &quot;latitude&quot;:
+<span class="fc" id="L346">                    group.setLatitude(Double.parseDouble(value));</span>
+<span class="fc" id="L347">                    break;</span>
+                  case &quot;longitude&quot;:
+<span class="fc" id="L349">                    group.setLongitude(Double.parseDouble(value));</span>
+<span class="fc" id="L350">                    break;</span>
+                  case &quot;capacity&quot;:
+<span class="fc" id="L352">                    group.setCapacity(Integer.parseInt(value));</span>
+<span class="fc" id="L353">                    break;</span>
+                  case &quot;description&quot;:
+<span class="fc" id="L355">                    group.setDescription(value);</span>
+<span class="fc" id="L356">                    break;</span>
+                  // Add cases for other attributes as needed
+                  default:
+<span class="nc" id="L359">                    return new ResponseEntity&lt;&gt;(</span>
+                            &quot;Attribute Not Found&quot;, HttpStatus.NOT_FOUND);
+                }
+<span class="fc" id="L362">                communityGroupRepository.save(group);</span>
+<span class="fc" id="L363">                return new ResponseEntity&lt;&gt;(group, HttpStatus.OK);</span>
+              })
+<span class="fc" id="L365">              .orElse(new ResponseEntity&lt;&gt;(</span>
+                      &quot;Community Group Not Found&quot;, HttpStatus.NOT_FOUND));
+<span class="nc" id="L367">    } catch (Exception e) {</span>
+<span class="nc" id="L368">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Deletes a community group by its ID.
+   *
+   * @param communityId The ID of the community group to delete.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @DeleteMapping(value = &quot;/deleteCommunityGroup&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  deleteCommunityGroup(@RequestParam(&quot;id&quot;) final int communityId) {
+    try {
+<span class="fc bfc" id="L383" title="All 2 branches covered.">      if (communityGroupRepository.existsById(communityId)) {</span>
+<span class="fc" id="L384">        communityGroupRepository.deleteById(communityId);</span>
+<span class="fc" id="L385">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Community Group Deleted Successfully&quot;, HttpStatus.OK);
+      } else {
+<span class="fc" id="L388">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Community Group Not Found&quot;, HttpStatus.NOT_FOUND);
+      }
+<span class="nc" id="L391">    } catch (Exception e) {</span>
+<span class="nc" id="L392">      return handleException(e);</span>
+    }
+  }
+
+  // Users
+
+  /**
+   * Retrieves all users.
+   *
+   * @return A {@code ResponseEntity} containing the list of users or a message
+   *         if none are found.
+   */
+  @GetMapping(value = &quot;/getUsers&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt; getUsers() {
+    try {
+<span class="fc" id="L407">      List&lt;User&gt; users = userRepository.findAll();</span>
+<span class="pc bpc" id="L408" title="1 of 2 branches missed.">      if (users.isEmpty()) {</span>
+<span class="nc" id="L409">        return new ResponseEntity&lt;&gt;(&quot;No Users Found&quot;, HttpStatus.NOT_FOUND);</span>
+      }
+<span class="fc" id="L411">      return new ResponseEntity&lt;&gt;(users, HttpStatus.OK);</span>
+<span class="nc" id="L412">    } catch (Exception e) {</span>
+<span class="nc" id="L413">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Retrieves a specific attribute of a user by their ID.
+   *
+   * @param userId        The ID of the user.
+   * @param attributeName The name of the attribute to retrieve (optional).
+   * @return A {@code ResponseEntity} containing the specified attribute's value
+   *         or the whole user if no attribute is specified.
+   */
+  @GetMapping(value = &quot;/getUser&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt; getUserById(@RequestParam(&quot;id&quot;) final int userId,
+                                       @RequestParam(
+                                               value = &quot;attribute&quot;,
+                                               required = false)
+                                       final String attributeName) {
+    try {
+<span class="fc" id="L432">      return userRepository.findById(userId)</span>
+<span class="fc" id="L433">              .map(user -&gt; {</span>
+<span class="fc bfc" id="L434" title="All 2 branches covered.">                if (attributeName != null) {</span>
+<span class="fc bfc" id="L435" title="All 8 branches covered.">                  switch (attributeName.toLowerCase(Locale.ENGLISH)) {</span>
+                    case &quot;name&quot;:
+<span class="fc" id="L437">                      return new ResponseEntity&lt;&gt;(user.getName(),</span>
+                              HttpStatus.OK);
+                    case &quot;email&quot;:
+<span class="fc" id="L440">                      return new ResponseEntity&lt;&gt;(user.getEmail(),</span>
+                              HttpStatus.OK);
+                    case &quot;age&quot;:
+<span class="fc" id="L443">                      return new ResponseEntity&lt;&gt;(user.getAge(),</span>
+                              HttpStatus.OK);
+                    case &quot;sex&quot;:
+<span class="fc" id="L446">                      return new ResponseEntity&lt;&gt;(user.getSex(),</span>
+                              HttpStatus.OK);
+                    case &quot;latitude&quot;:
+<span class="fc" id="L449">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L450">                              user.getLatitude(), HttpStatus.OK);</span>
+                    case &quot;longitude&quot;:
+<span class="fc" id="L452">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L453">                              user.getLongitude(), HttpStatus.OK);</span>
+                    case &quot;communitycount&quot;:
+<span class="fc" id="L455">                      return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L456">                              user.getNumberOfCommunities(), HttpStatus.OK);</span>
+                    default:
+<span class="fc" id="L458">                      return new ResponseEntity&lt;&gt;(</span>
+                              &quot;Attribute Not Found&quot;, HttpStatus.NOT_FOUND);
+                  }
+                }
+                // If no attribute is specified, return the entire user
+<span class="fc" id="L463">                return new ResponseEntity&lt;&gt;(user, HttpStatus.OK);</span>
+              })
+<span class="fc" id="L465">              .orElse(new ResponseEntity&lt;&gt;(&quot;User Not Found&quot;,</span>
+                      HttpStatus.NOT_FOUND));
+<span class="nc" id="L467">    } catch (Exception e) {</span>
+<span class="nc" id="L468">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Creates a new user.
+   *
+   * @param name      The name of the user.
+   * @param email     The email of the user.
+   * @param age       The age of the user.
+   * @param sex       The sex of the user.
+   * @param latitude  The latitude of the user's location.
+   * @param longitude The longitude of the user's location.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PostMapping(
+          value = &quot;/createUser&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  createUser(@RequestParam(&quot;name&quot;) final String name,
+             @RequestParam(&quot;email&quot;) final String email,
+             @RequestParam(&quot;age&quot;) final int age,
+             @RequestParam(&quot;sex&quot;) final String sex,
+             @RequestParam(&quot;latitude&quot;) final double latitude,
+             @RequestParam(&quot;longitude&quot;) final double longitude) {
+    try {
+      // Create a new User object
+<span class="fc" id="L494">      Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());</span>
+
+<span class="fc" id="L496">      User newUser =</span>
+              new User(name, email, age,
+<span class="fc" id="L498">                      User.Sex.valueOf(sex.toUpperCase(Locale.ENGLISH)),</span>
+                      latitude, longitude, currentTimestamp, currentTimestamp);
+
+      // Save the new user
+<span class="fc" id="L502">      User savedUser = userRepository.save(newUser);</span>
+<span class="fc" id="L503">      return new ResponseEntity&lt;&gt;(savedUser, HttpStatus.CREATED);</span>
+<span class="nc" id="L504">    } catch (Exception e) {</span>
+<span class="nc" id="L505">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Updates a specific attribute of a user by their ID.
+   *
+   * @param userId        The ID of the user.
+   * @param attributeName The name of the attribute to update.
+   * @param value         The new value for the specified attribute.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PatchMapping(
+          value = &quot;/updateUser&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  updateUser(@RequestParam(&quot;id&quot;) final int userId,
+             @RequestParam(&quot;attribute&quot;) final String attributeName,
+             @RequestParam(&quot;value&quot;) final String value) {
+    try {
+<span class="fc" id="L524">      return userRepository.findById(userId)</span>
+<span class="fc" id="L525">              .map(user -&gt; {</span>
+<span class="fc bfc" id="L526" title="All 7 branches covered.">                switch (attributeName.toLowerCase(Locale.ENGLISH)) {</span>
+                  case &quot;name&quot;:
+<span class="fc" id="L528">                    user.setName(value);</span>
+<span class="fc" id="L529">                    break;</span>
+                  case &quot;email&quot;:
+<span class="fc" id="L531">                    user.setEmail(value);</span>
+<span class="fc" id="L532">                    break;</span>
+                  case &quot;age&quot;:
+<span class="fc" id="L534">                    user.setAge(Integer.parseInt(value));</span>
+<span class="fc" id="L535">                    break;</span>
+                  case &quot;sex&quot;:
+<span class="fc" id="L537">                    user.setSex(User.Sex.valueOf(</span>
+<span class="fc" id="L538">                            value.toUpperCase(Locale.ENGLISH)));</span>
+<span class="fc" id="L539">                    break;</span>
+                  case &quot;latitude&quot;:
+<span class="fc" id="L541">                    user.setLatitude(Double.parseDouble(value));</span>
+<span class="fc" id="L542">                    break;</span>
+                  case &quot;longitude&quot;:
+<span class="fc" id="L544">                    user.setLongitude(Double.parseDouble(value));</span>
+<span class="fc" id="L545">                    break;</span>
+                  default:
+<span class="fc" id="L547">                    return new ResponseEntity&lt;&gt;(</span>
+                            &quot;Attribute Not Found&quot;,
+                            HttpStatus.NOT_FOUND);
+                }
+<span class="fc" id="L551">                userRepository.save(user);</span>
+<span class="fc" id="L552">                return new ResponseEntity&lt;&gt;(user, HttpStatus.OK);</span>
+              })
+<span class="fc" id="L554">              .orElse(new ResponseEntity&lt;&gt;(&quot;User Not Found&quot;,</span>
+                      HttpStatus.NOT_FOUND));
+<span class="nc" id="L556">    } catch (Exception e) {</span>
+<span class="nc" id="L557">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Deletes a user by their ID.
+   *
+   * @param userId The ID of the user to delete.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @DeleteMapping(
+          value = &quot;/deleteUser&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  deleteUser(@RequestParam(&quot;id&quot;) final int userId) {
+    try {
+<span class="fc bfc" id="L572" title="All 2 branches covered.">      if (userRepository.existsById(userId)) {</span>
+<span class="fc" id="L573">        userRepository.deleteById(userId);</span>
+<span class="fc" id="L574">        return new ResponseEntity&lt;&gt;(&quot;User Deleted Successfully&quot;, HttpStatus.OK);</span>
+      } else {
+<span class="fc" id="L576">        return new ResponseEntity&lt;&gt;(&quot;User Not Found&quot;, HttpStatus.NOT_FOUND);</span>
+      }
+<span class="nc" id="L578">    } catch (Exception e) {</span>
+<span class="nc" id="L579">      return handleException(e);</span>
+    }
+  }
+
+  // Resources
+
+  /**
+   * Retrieves all resources.
+   *
+   * @return A {@code ResponseEntity} containing a list of all resources.
+   */
+  @GetMapping(
+          value = &quot;/getAllResources&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  getAllResources() {
+    try {
+<span class="fc" id="L596">      List&lt;Resource&gt; resources = resourceRepository.findAll();</span>
+<span class="fc" id="L597">      return new ResponseEntity&lt;&gt;(resources, HttpStatus.OK);</span>
+<span class="nc" id="L598">    } catch (Exception e) {</span>
+<span class="nc" id="L599">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Retrieves resources of a given type.
+   *
+   * @param resourceType The type of the resource requested
+   *             (SHELTER, FOOD_BANK, CLINIC, RESTROOM, OTHER).
+   * @return A {@code ResponseEntity} containing the list of resources of the
+   * specified type or a message if no resources of the specified type exist.
+   */
+  @GetMapping(value = &quot;/getResourcesByType&quot;, produces =
+          MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt; getResourcesByType(@RequestParam(&quot;type&quot;)
+                       final ResourceType resourceType) {
+    try {
+<span class="fc" id="L616">      List&lt;Resource&gt; resources =</span>
+<span class="fc" id="L617">              resourceRepository.findByResourceType(resourceType);</span>
+
+<span class="fc bfc" id="L619" title="All 2 branches covered.">      if (resources.isEmpty()) {</span>
+<span class="fc" id="L620">        return new ResponseEntity&lt;&gt;(&quot;No resources were found for type: &quot;</span>
+                + resourceType, HttpStatus.NOT_FOUND);
+      }
+
+<span class="fc" id="L624">      return new ResponseEntity&lt;&gt;(resources, HttpStatus.OK);</span>
+<span class="nc" id="L625">    } catch (Exception e) {</span>
+<span class="nc" id="L626">      return handleException(e);</span>
+    }
+  }
+
+    /**
+     * Retrieves the closest resource of a given type
+     * based on the user's location.
+     *
+     * @param resourceType The type of the resource requested
+     *                     (SHELTER, FOOD_BANK, CLINIC, RESTROOM, OTHER).
+     * @param latitude     The latitude of the user's location.
+     * @param longitude    The longitude of the user's location.
+     * @return A {@code ResponseEntity} containing the closest resource of
+     *         the specified type or a message
+     *         if no resources of the specified type exist.
+     */
+    @GetMapping(value = &quot;/getClosestResource&quot;,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity&lt;?&gt; getClosestResource(
+            @RequestParam(&quot;type&quot;) final ResourceType resourceType,
+            @RequestParam(&quot;latitude&quot;) final double latitude,
+            @RequestParam(&quot;longitude&quot;) final double longitude) {
+        try {
+            // Fetch all resources of the specified type
+<span class="fc" id="L650">            List&lt;Resource&gt; resources =</span>
+<span class="fc" id="L651">                resourceRepository.findByResourceType(resourceType);</span>
+
+<span class="fc bfc" id="L653" title="All 2 branches covered.">            if (resources.isEmpty()) {</span>
+<span class="fc" id="L654">                return new ResponseEntity&lt;&gt;(</span>
+                    &quot;No resources were found for type: &quot;
+                    + resourceType,
+                    HttpStatus.NOT_FOUND);
+            }
+
+            // Calculate the closest resource using Euclidean distance
+<span class="fc" id="L661">            Resource closestResource = null;</span>
+<span class="fc" id="L662">            double closestDistance = Double.MAX_VALUE;</span>
+
+<span class="fc bfc" id="L664" title="All 2 branches covered.">            for (Resource resource : resources) {</span>
+<span class="fc" id="L665">                double distance = calculateEuclideanDistance(</span>
+                    latitude,
+                    longitude,
+<span class="fc" id="L668">                    resource.getLatitude(),</span>
+<span class="fc" id="L669">                    resource.getLongitude()</span>
+                );
+<span class="fc bfc" id="L671" title="All 2 branches covered.">                if (distance &lt; closestDistance) {</span>
+<span class="fc" id="L672">                    closestDistance = distance;</span>
+<span class="fc" id="L673">                    closestResource = resource;</span>
+                }
+<span class="fc" id="L675">            }</span>
+
+<span class="fc" id="L677">            return new ResponseEntity&lt;&gt;(closestResource, HttpStatus.OK);</span>
+<span class="nc" id="L678">        } catch (Exception e) {</span>
+<span class="nc" id="L679">            return handleException(e);</span>
+        }
+    }
+
+  /**
+   * Retrieves a resource by its ID.
+   *
+   * @param resourceId The ID of the resource.
+   * @param attributeName the attribute name
+   * @return A {@code ResponseEntity} containing the resource or a message if
+   *         not found.
+   */
+  @GetMapping(
+          value = &quot;/getResource&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt; getResourceById(@RequestParam(&quot;id&quot;)
+                                             final int resourceId,
+                                           @RequestParam(value = &quot;attribute&quot;,
+                                                   required = false)
+                                           final String attributeName) {
+    try {
+<span class="fc" id="L700">      return resourceRepository.findById(resourceId)</span>
+<span class="fc" id="L701">              .map(resource -&gt; {</span>
+<span class="fc bfc" id="L702" title="All 2 branches covered.">                if (attributeName != null) {</span>
+<span class="pc bpc" id="L703" title="1 of 9 branches missed.">                  switch (attributeName.toLowerCase(Locale.ENGLISH)) {</span>
+                    case &quot;resourcename&quot;:
+<span class="fc" id="L705">                      return new ResponseEntity&lt;&gt;(resource.getResourceName(),</span>
+                              HttpStatus.OK);
+                    case &quot;resourcetype&quot;:
+<span class="nc" id="L708">                      return new ResponseEntity&lt;&gt;(resource.getResourceType(),</span>
+                              HttpStatus.OK);
+                    case &quot;latitude&quot;:
+<span class="fc" id="L711">                      return new ResponseEntity&lt;&gt;(resource.getLatitude(),</span>
+                              HttpStatus.OK);
+                    case &quot;longitude&quot;:
+<span class="fc" id="L714">                      return new ResponseEntity&lt;&gt;(resource.getLongitude(),</span>
+                              HttpStatus.OK);
+                    case &quot;resourcehours&quot;:
+<span class="fc" id="L717">                      return new ResponseEntity&lt;&gt;(resource.getResourceHours(),</span>
+                              HttpStatus.OK);
+                    case &quot;description&quot;:
+<span class="fc" id="L720">                      return new ResponseEntity&lt;&gt;(resource.getDescription(),</span>
+                              HttpStatus.OK);
+                    case &quot;createdat&quot;:
+<span class="fc" id="L723">                      return new ResponseEntity&lt;&gt;(resource.getCreatedAt(),</span>
+                              HttpStatus.OK);
+                    case &quot;updatedat&quot;:
+<span class="fc" id="L726">                      return new ResponseEntity&lt;&gt;(resource.getUpdatedAt(),</span>
+                              HttpStatus.OK);
+                    default:
+<span class="fc" id="L729">                      return new ResponseEntity&lt;&gt;(&quot;Attribute Not Found&quot;,</span>
+                              HttpStatus.NOT_FOUND);
+                  }
+                }
+                // If no attribute is specified, return the entire resource
+<span class="fc" id="L734">                return new ResponseEntity&lt;&gt;(resource, HttpStatus.OK);</span>
+              })
+<span class="fc" id="L736">              .orElse(new ResponseEntity&lt;&gt;(&quot;Resource Not Found&quot;,</span>
+                      HttpStatus.NOT_FOUND));
+<span class="nc" id="L738">    } catch (Exception e) {</span>
+<span class="nc" id="L739">      return handleException(e);</span>
+    }
+  }
+
+
+  /**
+   * Creates a new resource.
+   *
+   * @param resourceName  The name of the resource.
+   * @param resourceType  The type of the resource.
+   * @param latitude      The latitude of the resource location.
+   * @param longitude     The longitude of the resource location.
+   * @param resourceHours The hours during which the resource is available.
+   * @param description   A description of the resource.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PostMapping(
+          value = &quot;/createResource&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  createResource(@RequestParam(&quot;resourceName&quot;) final String resourceName,
+                 @RequestParam(&quot;resourceType&quot;) final String resourceType,
+                 @RequestParam(&quot;latitude&quot;) final double latitude,
+                 @RequestParam(&quot;longitude&quot;) final double longitude,
+                 @RequestParam(&quot;resourceHours&quot;) final String resourceHours,
+                 @RequestParam(&quot;description&quot;) final String description) {
+    try {
+      // Convert the resourceType string to the ResourceType enum
+      Resource.ResourceType type;
+      try {
+<span class="fc" id="L769">        type = Resource.ResourceType.valueOf(</span>
+<span class="fc" id="L770">                resourceType.toUpperCase(Locale.ENGLISH));</span>
+<span class="nc" id="L771">      } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L772">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Invalid resource type provided&quot;, HttpStatus.BAD_REQUEST);
+<span class="fc" id="L774">      }</span>
+
+      // Create the current timestamp
+<span class="fc" id="L777">      Timestamp currentTimestamp = new</span>
+<span class="fc" id="L778">              Timestamp(System.currentTimeMillis());</span>
+
+      // Create the Resource object
+<span class="fc" id="L781">      Resource newResource =</span>
+              new Resource(resourceName, type,
+                      latitude, longitude, resourceHours,
+                      description, currentTimestamp, currentTimestamp);
+
+      // Save the new Resource
+<span class="fc" id="L787">      Resource savedResource = resourceRepository.save(newResource);</span>
+<span class="fc" id="L788">      return new ResponseEntity&lt;&gt;(savedResource, HttpStatus.CREATED);</span>
+<span class="nc" id="L789">    } catch (Exception e) {</span>
+<span class="nc" id="L790">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Updates a specific attribute of a resource by its ID.
+   *
+   * @param resourceId    The ID of the resource.
+   * @param attributeName The name of the attribute to update.
+   * @param value         The new value for the specified attribute.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PatchMapping(
+          value = &quot;/updateResource&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  updateResource(@RequestParam(&quot;id&quot;) final int resourceId,
+                 @RequestParam(&quot;attribute&quot;) final String attributeName,
+                 @RequestParam(&quot;value&quot;) final String value) {
+    try {
+<span class="fc" id="L810">      return resourceRepository.findById(resourceId)</span>
+<span class="fc" id="L811">              .map(resource -&gt; {</span>
+<span class="pc bpc" id="L812" title="1 of 7 branches missed.">                switch (attributeName.toLowerCase(Locale.ENGLISH)) {</span>
+                  case &quot;resourcename&quot;:
+<span class="fc" id="L814">                    resource.setResourceName(value);</span>
+<span class="fc" id="L815">                    break;</span>
+                  case &quot;resourcetype&quot;:
+<span class="fc" id="L817">                    resource.setResourceType(Resource.ResourceType.valueOf(</span>
+<span class="fc" id="L818">                            value.toUpperCase(Locale.ENGLISH)));</span>
+                    // Assuming ResourceType is an enum
+<span class="fc" id="L820">                    break;</span>
+                  case &quot;latitude&quot;:
+<span class="fc" id="L822">                    resource.setLatitude(Double.parseDouble(value));</span>
+<span class="fc" id="L823">                    break;</span>
+                  case &quot;longitude&quot;:
+<span class="fc" id="L825">                    resource.setLongitude(Double.parseDouble(value));</span>
+<span class="fc" id="L826">                    break;</span>
+                  case &quot;resourcehours&quot;:
+<span class="nc" id="L828">                    resource.setResourceHours(value);</span>
+<span class="nc" id="L829">                    break;</span>
+                  case &quot;description&quot;:
+<span class="fc" id="L831">                    resource.setDescription(value);</span>
+<span class="fc" id="L832">                    break;</span>
+                  default:
+<span class="fc" id="L834">                    return new ResponseEntity&lt;&gt;(</span>
+                            &quot;Attribute Not Found&quot;,
+                            HttpStatus.NOT_FOUND);
+                }
+<span class="fc" id="L838">                resourceRepository.save(resource);</span>
+<span class="fc" id="L839">                return new ResponseEntity&lt;&gt;(resource, HttpStatus.OK);</span>
+              })
+<span class="fc" id="L841">              .orElse(</span>
+                      new ResponseEntity&lt;&gt;(&quot;Resource Not Found&quot;,
+                              HttpStatus.NOT_FOUND));
+<span class="nc" id="L844">    } catch (Exception e) {</span>
+<span class="nc" id="L845">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Deletes a resource by its ID.
+   *
+   * @param resourceId The ID of the resource.
+   * @return A {@code ResponseEntity} indicating the result of the deletion.
+   */
+  @DeleteMapping(
+          value = &quot;/deleteResource&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  deleteResource(@RequestParam(&quot;id&quot;) final int resourceId) {
+    try {
+<span class="fc bfc" id="L861" title="All 2 branches covered.">      if (resourceRepository.existsById(resourceId)) {</span>
+<span class="fc" id="L862">        resourceRepository.deleteById(resourceId);</span>
+<span class="fc" id="L863">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Resource Deleted Successfully&quot;, HttpStatus.OK);
+      } else {
+<span class="fc" id="L866">        return new ResponseEntity&lt;&gt;(&quot;Resource Not Found&quot;,</span>
+                HttpStatus.NOT_FOUND);
+      }
+<span class="nc" id="L869">    } catch (Exception e) {</span>
+<span class="nc" id="L870">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Adds a user to a community group.
+   *
+   * @param userId      The ID of the user.
+   * @param communityId The ID of the community group.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @PostMapping(value = &quot;/addUserToCommunity&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  addUserToCommunity(@RequestParam(&quot;userId&quot;) final int userId,
+                     @RequestParam(&quot;communityId&quot;) final int communityId) {
+    try {
+      // Check if the user and community group exist
+<span class="fc" id="L888">      User user = userRepository.findById(userId).orElse(null);</span>
+<span class="fc" id="L889">      CommunityGroup community =</span>
+<span class="fc" id="L890">              communityGroupRepository.findById(communityId).orElse(null);</span>
+
+<span class="fc bfc" id="L892" title="All 4 branches covered.">      if (user != null &amp;&amp; community != null) {</span>
+        // Add the association if it doesn't already exist
+<span class="pc bpc" id="L894" title="1 of 2 branches missed.">        if (!userCommunityRepository.existsByUserAndCommunity(</span>
+                user, community)) {
+<span class="fc" id="L896">          UserCommunity userCommunity = new UserCommunity(user, community);</span>
+<span class="fc" id="L897">          userCommunityRepository.save(userCommunity);</span>
+<span class="fc" id="L898">          return new ResponseEntity&lt;&gt;(</span>
+                  &quot;User added to community group successfully&quot;,
+                  HttpStatus.CREATED);
+        } else {
+<span class="nc" id="L902">          return new ResponseEntity&lt;&gt;(</span>
+                  &quot;User is already a member of the community group&quot;,
+                  HttpStatus.CONFLICT);
+        }
+<span class="fc bfc" id="L906" title="All 2 branches covered.">      } else if (user != null) {</span>
+<span class="fc" id="L907">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Community Group Not Found&quot;,
+                HttpStatus.NOT_FOUND);
+      } else {
+<span class="fc" id="L911">        return new ResponseEntity&lt;&gt;(&quot;User Not Found&quot;,</span>
+                HttpStatus.NOT_FOUND);
+      }
+<span class="nc" id="L914">    } catch (Exception e) {</span>
+<span class="nc" id="L915">      return handleException(e);</span>
+    }
+  }
+
+  /**
+   * Removes a user from a community group.
+   *
+   * @param userId      The ID of the user.
+   * @param communityId The ID of the community group.
+   * @return A {@code ResponseEntity} indicating the result of the operation.
+   */
+  @DeleteMapping(value = &quot;/removeUserFromCommunity&quot;,
+          produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity&lt;?&gt;
+  removeUserFromCommunity(@RequestParam(&quot;userId&quot;) final int userId,
+                          @RequestParam(&quot;communityId&quot;) final int communityId) {
+    try {
+      // Check if the association exists
+<span class="fc" id="L933">      User user = userRepository.findById(userId).orElse(null);</span>
+<span class="fc" id="L934">      CommunityGroup community =</span>
+<span class="fc" id="L935">              communityGroupRepository.findById(communityId).orElse(null);</span>
+
+<span class="fc bfc" id="L937" title="All 4 branches covered.">      if (user != null &amp;&amp; community != null) {</span>
+<span class="fc bfc" id="L938" title="All 2 branches covered.">        if (userCommunityRepository.existsByUserAndCommunity(</span>
+                user, community)) {
+<span class="fc" id="L940">          UserCommunity userCommunity =</span>
+<span class="fc" id="L941">                  userCommunityRepository.findByUserAndCommunity(</span>
+                          user, community);
+<span class="fc" id="L943">          userCommunityRepository.delete(userCommunity);</span>
+<span class="fc" id="L944">          return new ResponseEntity&lt;&gt;(</span>
+                  &quot;User removed from community group successfully&quot;,
+                  HttpStatus.OK);
+        } else {
+<span class="fc" id="L948">          return new ResponseEntity&lt;&gt;(</span>
+                  &quot;User is not a member of the community group&quot;,
+                  HttpStatus.NOT_FOUND);
+        }
+<span class="fc bfc" id="L952" title="All 2 branches covered.">      } else if (user != null) {</span>
+<span class="fc" id="L953">        return new ResponseEntity&lt;&gt;(</span>
+                &quot;Community Group not found&quot;,
+                HttpStatus.NOT_FOUND);
+      } else {
+<span class="fc" id="L957">        return new ResponseEntity&lt;&gt;(&quot;User not found&quot;,</span>
+                HttpStatus.NOT_FOUND);
+      }
+<span class="nc" id="L960">    } catch (Exception e) {</span>
+<span class="nc" id="L961">      return handleException(e);</span>
+    }
+  }
+
+  private ResponseEntity&lt;?&gt; handleException(final Exception e) {
+<span class="nc" id="L966">    System.out.println(e.toString());</span>
+<span class="nc" id="L967">    return new ResponseEntity&lt;&gt;(&quot;An Error has occurred&quot;,</span>
+            HttpStatus.OK);
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

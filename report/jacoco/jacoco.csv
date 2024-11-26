@@ -1,0 +1,11 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+javadb,com.example.javadb.controller,RouteController,166,998,6,88,56,221,8,87,2,29
+javadb,com.example.javadb.model,Resource,0,171,2,16,0,51,2,27,0,20
+javadb,com.example.javadb.model,CommunityGroup.CommunityType,0,21,0,0,0,4,0,1,0,1
+javadb,com.example.javadb.model,UserCommunity,0,26,0,0,0,12,0,6,0,6
+javadb,com.example.javadb.model,User,0,189,0,22,0,54,0,34,0,23
+javadb,com.example.javadb.model,CommunityGroup,0,178,0,18,0,52,0,32,0,23
+javadb,com.example.javadb.model,UserCommunityId,52,3,8,0,12,2,7,1,3,1
+javadb,com.example.javadb.model,Resource.ResourceType,0,33,0,0,0,6,0,1,0,1
+javadb,com.example.javadb.model,User.Sex,0,21,0,0,0,4,0,1,0,1
+javadb,com.example.javadb,JavadbApplication,5,3,0,0,2,1,1,1,1,1
