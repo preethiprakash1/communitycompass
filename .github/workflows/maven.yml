@@ -73,26 +73,17 @@ jobs:
       - name: Run Checkstyle
         run: mvn checkstyle:checkstyle
         working-directory: project
-      - name: Upload Checkstyle Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: checkstyle-report
-          path: reports/checkstyle.html
       
       - name: Run Static Analysis (PMD)
         run: mvn pmd:check
         working-directory: project
-      - name: Upload PMD Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: pmd-report
-          path: reports/pmd.xml
 
       - name: Run Branch Coverage with Jacoco
         run: mvn jacoco:report
         working-directory: project
-      - name: Upload Jacoco Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: jacoco-report
-          path: reports/jacoco.html
+
+      - name: Copy Reports to Repository
+        run: |
+          cat communitycompass/project/target/site/checkstyle.html
+          cat communitycompass/project/target/site/jacoco/index.html
+          cat communitycompass/project/target/pmd.xml
