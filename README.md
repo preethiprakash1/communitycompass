@@ -245,7 +245,7 @@ We used the tool "checkstyle" to check the style of our code and generate style 
 mvn checkstyle:check
 ```
 You can also see the screenshot below for the most recent Checkstyle Report.
-![checkstyle](checkstyle.jpeg)
+![checkstyle](checkstyle.png)
 
 ## Branch Coverage Reporting
 We used JaCoCo to perform branch analysis in order to see the branch coverage of the relevant code within the code base. You can use the following command inside the project directory to see the report:
@@ -256,6 +256,10 @@ open target/site/jacoco/index.html
 ```
 You can also see the screenshot below for the most recent JaCoCo Report.
 ![jacoco](jacoco.png)
+
+## Static Code Analysis
+We used PMD to perform static analysis on our codebase, see below for the most recent output.
+![pmd](pmd.png)
 
 ## Tools Used
 This section includes notes on tools and technologies used in building this service.
