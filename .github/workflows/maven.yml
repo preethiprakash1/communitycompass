@@ -82,8 +82,11 @@ jobs:
         run: mvn jacoco:report
         working-directory: project
 
-      - name: Copy Reports to Repository
-        run: |
-          cat project/target/checkstyle-result.xml
-          cat project/target/site/jacoco/index.html
-          cat project/target/site/pmd.html
+      - name: Output checkstyle
+        run: cat project/target/checkstyle-result.xml
+
+      - name: Output Jacoco
+        run: cat project/target/site/jacoco/index.html
+      
+      - name: Output PMD
+        run: cat project/target/site/pmd.html
