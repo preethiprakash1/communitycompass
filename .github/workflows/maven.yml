@@ -94,7 +94,9 @@ jobs:
       - name: Generate Report
         run: |
           mkdir -p report
-          cp -r project/target/site/* report/
+          cp project/target/reports/checkstyle.html report/
+          cp project/target/site/pmd.html report/
+          cp project/target/site/jacoco/index.html report/jacoco/
           git add report/*
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub"
