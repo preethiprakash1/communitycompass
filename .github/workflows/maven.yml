@@ -27,25 +27,17 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-
-    # - name: Generate Google Application Credentials
-    #   id: create-json
-    #   uses: jsdaniell/create-json@v1
-    #   with:
-    #     name: credentials.json
-    #     json: ${{ github.workspace }}/${{ secrets.GCLOUD_CREDS }}.json
-
-    # - name: Use Google Application Credentials
-    #   run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
     
-    # Build with Maven
+    - name: Write Google Cloud credentials
+      run: |
+        echo ${{ secrets.GCLOUD_CREDS }} > ${ github.workspace }/gcloud_creds.json
+
     - name: Build with Maven
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDS }}
+        GOOGLE_APPLICATION_CREDENTIALS: ${ github.workspace }/gcloud_creds.json
       run: mvn -B package --file project/pom.xml
 
-    # Run Tests with Maven
     - name: Run Tests with Maven
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDS }}
+        GOOGLE_APPLICATION_CREDENTIALS: ${ github.workspace }/gcloud_creds.json
       run: mvn clean test --file project/pom.xml
