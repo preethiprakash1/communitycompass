@@ -79,7 +79,7 @@ jobs:
         run: mvn clean test --file project/pom.xml
 
       - name: Run Checkstyle
-        run: mvn checkstyle:check
+        run: mvn checkstyle:checkstyle
         working-directory: project
       
       - name: Run Static Analysis (PMD)
