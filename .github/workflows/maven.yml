@@ -84,6 +84,6 @@ jobs:
 
       - name: Copy Reports to Repository
         run: |
-          cat communitycompass/project/target/site/checkstyle.html
-          cat communitycompass/project/target/site/jacoco/index.html
-          cat communitycompass/project/target/pmd.xml
+          cat project/target/site/checkstyle.html
+          cat project/target/site/jacoco/index.html
+          cat project/target/pmd.xml
