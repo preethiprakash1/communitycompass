@@ -71,7 +71,8 @@ jobs:
           cache: maven
 
       - name: Run Checkstyle
-        run: mvn checkstyle:checkstyle
+        run: mvn checkstyle:checkstyle -f ../pom.xml
+        working-directory: communitycompass/projects
       - name: Upload Checkstyle Report
         uses: actions/upload-artifact@v3
         with:
