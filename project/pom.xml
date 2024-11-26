@@ -81,6 +81,22 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
+                    <!-- Attach JaCoCo to the test phase -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Generate the coverage report -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
 				</executions>
 			</plugin>
             <plugin>
