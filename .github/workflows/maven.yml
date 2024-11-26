@@ -19,8 +19,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: key.json
+
     steps:
     - uses: actions/checkout@v4
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.GCP_SA_STG_EMAIL }}
+        service_account_key: ${{ secrets.GCP_SA_STG_KEY }}
+        export_default_credentials: true
+    - name: set gcp credentials
+      run:  gcloud info
+    - name: echo gcp credentials
+      run:  echo this is ${GOOGLE_APPLICATION_CREDENTIALS}
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -28,15 +42,15 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Generate Google Application Credentials
-      id: create-json
-      uses: jsdaniell/create-json@v1
-      with:
-        name: credentials.json
-        json: ${{ github.workspace }}/${{ secrets.GCLOUD_CREDS }}.json
+    # - name: Generate Google Application Credentials
+    #   id: create-json
+    #   uses: jsdaniell/create-json@v1
+    #   with:
+    #     name: credentials.json
+    #     json: ${{ github.workspace }}/${{ secrets.GCLOUD_CREDS }}.json
 
-    - name: Use Google Application Credentials
-      run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
+    # - name: Use Google Application Credentials
+    #   run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
     
     # Build with Maven
     - name: Build with Maven
