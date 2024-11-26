@@ -90,15 +90,6 @@ jobs:
         run: mvn jacoco:report
         working-directory: project
 
-      # - name: Output checkstyle
-      #   run: cat project/target/checkstyle-result.xml
-
-      # - name: Output Jacoco
-      #   run: cat project/target/site/jacoco/index.html
-      
-      # - name: Output PMD
-      #   run: cat project/target/site/pmd.html
-
       - name: Generate Report
         run: |
           mkdir -p reports
@@ -108,7 +99,7 @@ jobs:
           git add reports/*
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub"
-          git commit -m "[ADD] Reports from CI" -a || echo "No changes to commit"
+          git commit -m "add checkstyle, pmd, and jacoco reports from CI" -a || echo "No changes to commit"
 
       - name: Push changes for Pull Request
         if: ${{ github.event_name == 'pull_request' }}
