@@ -96,15 +96,15 @@ jobs:
           mkdir -p report
           cp -r project/target/site/* report/
           git add report/*
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub"
+          git config --global user.email "pp2769@columbia.edu"
+          git config --global user.name "preethiprakash1"
           git commit -m "Add reports from CI" -a || echo "No changes to commit"
 
       - name: Push changes for Pull Request
         if: ${{ github.event_name == 'pull_request' }}
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PERSONAL_TOKEN }}
           branch: ${{ github.head_ref }}
           force: true
 
@@ -112,6 +112,6 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PERSONAL_TOKEN }}
           branch: ${{ github.ref }}
           force: true
