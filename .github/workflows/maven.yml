@@ -33,7 +33,7 @@ jobs:
       uses: jsdaniell/create-json@v1
       with:
         name: credentials.json
-        json: ${{ secrets.GCLOUD_CREDS }}.json
+        json: ${{ github.workspace }}/${{ secrets.GCLOUD_CREDS }}.json
 
     - name: Use Google Application Credentials
       run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
