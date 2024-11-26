@@ -35,8 +35,8 @@ jobs:
         name: "credentials.json"
         json: "${{ secrets.GCLOUD_CREDS }}"
 
-      - name: Use Google Application Credentials
-        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
+    - name: Use Google Application Credentials
+      run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(readlink -f credentials.json)"
     
     # Build with Maven
     - name: Build with Maven
