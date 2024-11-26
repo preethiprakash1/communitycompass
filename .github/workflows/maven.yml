@@ -82,11 +82,36 @@ jobs:
         run: mvn jacoco:report
         working-directory: project
 
-      - name: Output checkstyle
-        run: cat project/target/checkstyle-result.xml
+      # - name: Output checkstyle
+      #   run: cat project/target/checkstyle-result.xml
 
-      - name: Output Jacoco
-        run: cat project/target/site/jacoco/index.html
+      # - name: Output Jacoco
+      #   run: cat project/target/site/jacoco/index.html
       
-      - name: Output PMD
-        run: cat project/target/site/pmd.html
+      # - name: Output PMD
+      #   run: cat project/target/site/pmd.html
+
+      - name: Generate Report
+      run: |
+        mkdir -p report
+        cp -r project/target/site/* report/
+        git add report/*
+        git config --local user.email "pp2769@columbia.edu"
+        git config --local user.name "preethiprakash1"
+        git commit -m "Add reports from CI" -a || echo "No changes to commit"
+
+    - name: Push changes for Pull Request
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
+        force: true
+
+    - name: Push changes for Direct Push
+      if: ${{ github.event_name == 'push' }}
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        force: true
