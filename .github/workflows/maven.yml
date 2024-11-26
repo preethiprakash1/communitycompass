@@ -30,14 +30,14 @@ jobs:
     
     - name: Write Google Cloud credentials
       run: |
-        echo ${{ secrets.GCLOUD_CREDS }} > ${ github.workspace }/gcloud_creds.json
+        echo "${{ secrets.GCLOUD_CREDS }}" > "${ github.workspace }/gcloud_creds.json"
 
     - name: Build with Maven
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${ github.workspace }/gcloud_creds.json
+        GOOGLE_APPLICATION_CREDENTIALS: "${ github.workspace }/gcloud_creds.json"
       run: mvn -B package --file project/pom.xml
 
     - name: Run Tests with Maven
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${ github.workspace }/gcloud_creds.json
+        GOOGLE_APPLICATION_CREDENTIALS: "${ github.workspace }/gcloud_creds.json"
       run: mvn clean test --file project/pom.xml
