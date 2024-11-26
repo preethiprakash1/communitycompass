@@ -95,8 +95,8 @@ jobs:
           path: target/site/jacoco/index.html
       
       - name: Copy Reports to Repository
-      run: |
-        mkdir -p ci-reports
-        cp target/site/checkstyle.html ci-reports/checkstyle.html
-        cp target/site/jacoco/index.html ci-reports/jacoco.html
-        cp target/pmd.xml ci-reports/pmd.xml
+        run: |
+          mkdir -p ci-reports
+          cp target/site/checkstyle.html ci-reports/checkstyle.html
+          cp target/site/jacoco/index.html ci-reports/jacoco.html
+          cp target/pmd.xml ci-reports/pmd.xml
