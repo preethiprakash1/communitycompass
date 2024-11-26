@@ -101,11 +101,11 @@ jobs:
 
       - name: Generate Report
         run: |
-          mkdir -p report/jacoco report/reports
-          cp -r project/target/reports/* report/reports/
-          cp -r project/target/site/jacoco/* report/jacoco/
-          cp project/target/site/pmd.html report/
-          git add report/*
+          mkdir -p reports
+          cp project/target/reports/checkstyle.html reports/
+          cp project/target/site/pmd.html reports/
+          cp project/target/site/jacoco/index.html reports/
+          git add reports/*
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub"
           git commit -m "[ADD] Reports from CI" -a || echo "No changes to commit"
