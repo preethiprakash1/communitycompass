@@ -77,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: checkstyle-report
-          path: target/site/checkstyle.html
+          path: reports/checkstyle.html
       
       - name: Run Static Analysis (PMD)
         run: mvn pmd:check
@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pmd-report
-          path: target/pmd.xml
+          path: reports/pmd.xml
 
       - name: Run Branch Coverage with Jacoco
         run: mvn jacoco:report
@@ -95,11 +95,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: jacoco-report
-          path: target/site/jacoco/index.html
-      
-      - name: Copy Reports to Repository
-        run: |
-          mkdir -p ci-reports
-          cp target/site/checkstyle.html ci-reports/checkstyle.html
-          cp target/site/jacoco/index.html ci-reports/jacoco.html
-          cp target/pmd.xml ci-reports/pmd.xml
+          path: reports/jacoco.html
