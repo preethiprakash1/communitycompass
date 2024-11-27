@@ -12,7 +12,7 @@ automatic_scaling:  # Enable automatic scaling
 env_variables:
   SPRING_DATASOURCE_URL: jdbc:mysql://google/communitycompassdb?cloudSqlInstance=communitycompass-438103:us-east1:communitycompassdb&socketFactory=com.google.cloud.sql.mysql.SocketFactory
   SPRING_DATASOURCE_USERNAME: root
-  SPRING_DATASOURCE_PASSWORD: root
+  SPRING_DATASOURCE_PASSWORD: S@NZ3FlAg9Jx37gy
 
 handlers:
   - url: /.*
