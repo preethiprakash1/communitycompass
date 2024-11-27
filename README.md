@@ -1,5 +1,5 @@
 # Community Compass README
-This is the GitHub repository for the Community Compass service. 
+This is the GitHub repository for the Community Compass service. If you're looking for the client, please visit: https://github.com/nlin0907/communitycompass-client
 
 #### Team members:
 - Nicole Lin, nsl2126
@@ -24,7 +24,7 @@ open target/site/jacoco/index.html
 The endpoints are listed below in the "Endpoints" section, with brief descriptions of their parameters.
 
 ## Running a Cloud based Instance
-You can reach this service in the cloud.
+You can reach this service in the cloud. To do this, we used Google Cloud, cloned our repository, and ran <code>gcloud app deploy</code>.
 1. When running tests in Postman point them to: https://communitycompass-438103.ue.r.appspot.com/<endpoint>
 2. To see if the cloud service is still operational please see if the following displays a welcome message: https://communitycompass-438103.ue.r.appspot.com/
 3. If the above produced a welcome message "Hi, welcome to Community Compass" then that means the service is operational via the cloud.
@@ -280,6 +280,10 @@ This section includes notes on tools and technologies used in building this serv
   - JUnit tests get run automatically as part of the CI pipeline.
 - JaCoCo
   - JaCoCo is used to generate code coverage reports.
+- PMD
+  - We used PMD for static analysis with the default ruleset.
 - Postman and Curl
   - Postman and curl are used to test the functionality of our APIs.
+- Trello
+  - Project management tool. You can find our board here: https://trello.com/b/kiaKflOR/powerpandas
 
